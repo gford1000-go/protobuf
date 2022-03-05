@@ -1,0 +1,10 @@
+syntax = "proto3";
+import "encryptable_value.proto";
+
+option go_package = "github.com/gford1000-go/protobuf/types/cell";
+
+message Cell {
+    oneof c {
+        EncryptableValue scalar = 2;
+    }
+}
