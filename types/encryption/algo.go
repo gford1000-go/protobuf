@@ -23,3 +23,4 @@ func ParseAlgo(a Algo) (Algorithm, error) {
 	}
 	return Unknown, errUnknownAlgorithmUsed
 }
+
