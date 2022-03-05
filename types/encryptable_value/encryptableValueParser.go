@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/gford1000-go/protobuf/types/encrypted_value"
+	"github.com/gford1000-go/protobuf/types/encryption"
 	"github.com/gford1000-go/protobuf/types/value"
 	"google.golang.org/protobuf/proto"
 )
@@ -11,16 +12,9 @@ import (
 var errMissingDecryptor = errors.New("TokenKeyDecryptor must not be nil")
 var errUnknownAlgorithmUsed = errors.New("unsupported algorithm used for encryption")
 
-// Algorithm represents available encryption algorithms
-type Algorithm uint
-
-const (
-	GCM Algorithm = iota
-)
-
 // EncryptableValueParser returns a Value, decrypting if required using
 // the supplied TokenKeyDecryptor
-func NewEncryptableValueParser(decryptor TokenKeyDecryptor) (*EncryptableValueParser, error) {
+func NewEncryptableValueParser(decryptor encryption.TokenKeyDecryptor) (*EncryptableValueParser, error) {
 	if decryptor == nil {
 		return nil, errMissingDecryptor
 	}
@@ -29,19 +23,14 @@ func NewEncryptableValueParser(decryptor TokenKeyDecryptor) (*EncryptableValuePa
 }
 
 type EncryptableValueParser struct {
-	d TokenKeyDecryptor
+	d encryption.TokenKeyDecryptor
 }
 
 func (cp *EncryptableValueParser) decryptValue(e *encrypted_value.EncryptedValue) (*value.Value, error) {
 
-	var a Algorithm
-	switch e.A {
-	case encrypted_value.EncryptedValue_GCM:
-		{
-			a = GCM
-		}
-	default:
-		return nil, errUnknownAlgorithmUsed
+	a, err := encryption.ParseAlgo(e.A)
+	if err != nil {
+		return nil, err
 	}
 
 	b, err := cp.d.Decrypt(e.GetKeyToken(), a, e.V)
