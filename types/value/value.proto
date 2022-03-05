@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/gford1000-go/protobuf/types/value";
+
+message Value {
+  message ValueMap {
+    map<string, Value> m = 1;
+  }
+  message ValueList {
+    repeated Value v = 1;
+  }
+
+  oneof v {
+    bool isNull = 17;
+    bytes x = 1;
+    bool b = 2;
+    string s = 3;
+    double d = 4;
+    float f = 5;
+    int32 i32 = 6;
+    int64 i64 = 7;
+    uint32 u32 = 8;
+    uint64 u64 = 9;
+    sint32 s32 = 10;
+    sint64 s64 = 11;
+    fixed32 f32 = 12;
+    fixed64 f64 = 13;
+    google.protobuf.Timestamp t = 14;
+    ValueMap m = 15;
+    ValueList l = 16;
+  }
+}
+
+
+
