@@ -1,0 +1,5 @@
+#!/bin/sh
+
+GOPATH=/users/gford1000/Go
+
+protoc -I=/usr/local/include --go_out=$GOPATH/src --proto_path=. algo.proto

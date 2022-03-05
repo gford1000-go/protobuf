@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option go_package = "github.com/gford1000-go/protobuf/types/encryption";
+
+enum Algo {
+    GCM = 0;
+}
+
