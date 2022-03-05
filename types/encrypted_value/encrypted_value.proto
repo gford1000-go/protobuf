@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "github.com/gford1000-go/protobuf/types/encrypted_value";
+
+message EncryptedValue {
+    enum Algo {
+        GCM = 0;
+    }
+
+    bytes keyToken = 1;
+    Algo a = 2;
+    bytes v = 3;
+}
+
+
+
