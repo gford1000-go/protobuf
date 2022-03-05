@@ -23,9 +23,9 @@ func (g *GCMTokenKeyEncryptor) GetKeys() map[string][]byte {
 }
 
 // Encrypt attempts to decrypt using the key associated with the token.
-func (g *GCMTokenKeyEncryptor) Encrypt(keyToken, plaintext []byte) ([]byte, error) {
+func (g *GCMTokenKeyEncryptor) Encrypt(keyToken []byte, plaintext []byte) ([]byte, Algorithm, error) {
 	if len(keyToken) == 0 {
-		return nil, errInvalidKeyToken
+		return nil, Unknown, errInvalidKeyToken
 	}
 
 	k, ok := g.keys[string(keyToken)]
@@ -33,20 +33,20 @@ func (g *GCMTokenKeyEncryptor) Encrypt(keyToken, plaintext []byte) ([]byte, erro
 		var err error
 		k, err = NewAESKey()
 		if err != nil {
-			return nil, err
+			return nil, Unknown, err
 		}
 		g.keys[string(keyToken)] = k
 	}
 
 	gcm, err := NewGCMEncryptor(k)
 	if err != nil {
-		return nil, errEncryptionError
+		return nil, Unknown, errEncryptionError
 	}
 
 	b, err := gcm.Encrypt(plaintext)
 	if err != nil {
-		return nil, errEncryptionError
+		return nil, Unknown, errEncryptionError
 	}
 
-	return b, nil
+	return b, GCM, nil
 }
