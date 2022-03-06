@@ -2,4 +2,4 @@
 
 GOPATH=/users/gford1000/Go
 
-protoc -I=/usr/local/include -I=$GOPATH/src/github.com/gford1000-go/protobuf/types/encryption --go_out=$GOPATH/src --proto_path=. encrypted_value.proto
+protoc -I=/usr/local/include -I=$GOPATH/src/github.com/gford1000-go/protobuf/types/encryption --go_out=$GOPATH/src --proto_path=. encrypted_object.proto
