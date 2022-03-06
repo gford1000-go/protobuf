@@ -3,7 +3,7 @@ package encryptable_value
 import (
 	"errors"
 
-	"github.com/gford1000-go/protobuf/types/encrypted_value"
+	"github.com/gford1000-go/protobuf/types/encrypted_object"
 	"github.com/gford1000-go/protobuf/types/encryption"
 	"github.com/gford1000-go/protobuf/types/value"
 	"google.golang.org/protobuf/proto"
@@ -26,7 +26,7 @@ type EncryptableValueParser struct {
 	d encryption.TokenKeyDecryptor
 }
 
-func (cp *EncryptableValueParser) decryptValue(e *encrypted_value.EncryptedValue) (*value.Value, error) {
+func (cp *EncryptableValueParser) decryptValue(e *encrypted_object.EncryptedObject) (*value.Value, error) {
 
 	a, err := encryption.ParseAlgo(e.A)
 	if err != nil {

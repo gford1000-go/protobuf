@@ -1,12 +1,12 @@
 syntax = "proto3";
-import "encrypted_value.proto";
+import "encrypted_object.proto";
 import "value.proto";
 
 option go_package = "github.com/gford1000-go/protobuf/types/encryptable_value";
 
 message EncryptableValue {
     oneof c {
-        EncryptedValue e = 2;
+        EncryptedObject e = 2;
         Value v = 3;
     }
 }
