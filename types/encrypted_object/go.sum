@@ -1,5 +1,7 @@
-github.com/gford1000-go/protobuf/types/encryption v0.0.0-20220306095118-0b6dd843b401 h1:pLpDfQrui989YW4anFUDllt0yMpirc/pz5ZmFxLCxLs=
-github.com/gford1000-go/protobuf/types/encryption v0.0.0-20220306095118-0b6dd843b401/go.mod h1:KgJv1dboyZo6tpmO2Z9jq6Z1D+3MNxrckOGoqVfV2Y0=
+github.com/gford1000-go/protobuf/types/encryption v0.0.0-20220306172302-7b74d54a0658 h1:SkBnE1YxNRPXpbxme0vkR+kfpzduRIgAiUR0Wf6Qb+M=
+github.com/gford1000-go/protobuf/types/encryption v0.0.0-20220306172302-7b74d54a0658/go.mod h1:KgJv1dboyZo6tpmO2Z9jq6Z1D+3MNxrckOGoqVfV2Y0=
+github.com/gford1000-go/protobuf/types/value v0.0.0-20220306172302-7b74d54a0658 h1:ytmtV8xpo8GYwtn72WGS2aighgRuKi5Z2fyHm3I5et8=
+github.com/gford1000-go/protobuf/types/value v0.0.0-20220306172302-7b74d54a0658/go.mod h1:NPcQm7G0DPUvGaUNgLGHIqBo7Y9Huokf9AAg+x+HegA=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
