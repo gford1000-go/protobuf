@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/gford1000-go/protobuf/types/encryptable_value"
-	"github.com/gford1000-go/protobuf/types/encrypted_value"
+	"github.com/gford1000-go/protobuf/types/encrypted_object"
 	"github.com/gford1000-go/protobuf/types/encryption"
 	"github.com/gford1000-go/protobuf/types/value"
 	"google.golang.org/protobuf/proto"
@@ -34,7 +34,7 @@ func (cb *CellBuilder) marshalValue(v *value.Value) ([]byte, error) {
 	return data, nil
 }
 
-func (cb *CellBuilder) encryptValue(keyToken []byte, v *value.Value) (*encrypted_value.EncryptedValue, error) {
+func (cb *CellBuilder) encryptValue(keyToken []byte, v *value.Value) (*encrypted_object.EncryptedObject, error) {
 
 	b, err := cb.marshalValue(v)
 	if err != nil {
@@ -51,7 +51,7 @@ func (cb *CellBuilder) encryptValue(keyToken []byte, v *value.Value) (*encrypted
 		return nil, err
 	}
 
-	return &encrypted_value.EncryptedValue{
+	return &encrypted_object.EncryptedObject{
 			A:        algo,
 			KeyToken: keyToken,
 			V:        e,
@@ -77,7 +77,7 @@ func (cb *CellBuilder) Marshal(i interface{}, d TokenKeyRetriever, ve ValueEncry
 	var keyToken []byte = d.GetToken()
 	var encrypt bool = ve.Encrypt(keyToken)
 
-	var e *encrypted_value.EncryptedValue
+	var e *encrypted_object.EncryptedObject
 
 	if encrypt {
 		var err error
