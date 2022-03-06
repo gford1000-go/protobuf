@@ -35,9 +35,11 @@ func (cp *EncryptableValueParser) Parse(e *EncryptableValue) (*value.Value, erro
 	case *EncryptableValue_E:
 		{
 			var err error
-			if err = cp.eop.Parse(x.E, v); err != nil {
+			var v1 value.Value
+			if err = cp.eop.Parse(x.E, &v1); err != nil {
 				return nil, err
 			}
+			v = &v1
 		}
 	}
 
