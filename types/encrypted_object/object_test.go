@@ -37,7 +37,7 @@ func TestObject(t *testing.T) {
 			t.Errorf("failed to decrypt: %v", err)
 		}
 
-		i1, err := value.ParseValue(v)
+		i1, err := value.ParseValue(&v1)
 		if err != nil {
 			t.Errorf("failed to parse value: %v", err)
 		}
