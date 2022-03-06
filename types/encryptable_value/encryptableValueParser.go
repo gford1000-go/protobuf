@@ -1,50 +1,24 @@
 package encryptable_value
 
 import (
-	"errors"
-
 	"github.com/gford1000-go/protobuf/types/encrypted_object"
 	"github.com/gford1000-go/protobuf/types/encryption"
 	"github.com/gford1000-go/protobuf/types/value"
-	"google.golang.org/protobuf/proto"
 )
-
-var errMissingDecryptor = errors.New("TokenKeyDecryptor must not be nil")
-var errUnknownAlgorithmUsed = errors.New("unsupported algorithm used for encryption")
 
 // EncryptableValueParser returns a Value, decrypting if required using
 // the supplied TokenKeyDecryptor
 func NewEncryptableValueParser(decryptor encryption.TokenKeyDecryptor) (*EncryptableValueParser, error) {
-	if decryptor == nil {
-		return nil, errMissingDecryptor
+	eop, err := encrypted_object.NewEncryptedObjectParser(decryptor)
+	if err != nil {
+		return nil, err
 	}
 
-	return &EncryptableValueParser{d: decryptor}, nil
+	return &EncryptableValueParser{eop: eop}, nil
 }
 
 type EncryptableValueParser struct {
-	d encryption.TokenKeyDecryptor
-}
-
-func (cp *EncryptableValueParser) decryptValue(e *encrypted_object.EncryptedObject) (*value.Value, error) {
-
-	a, err := encryption.ParseAlgo(e.A)
-	if err != nil {
-		return nil, err
-	}
-
-	b, err := cp.d.Decrypt(e.GetKeyToken(), a, e.V)
-	if err != nil {
-		return nil, err
-	}
-
-	v := &value.Value{}
-	err = proto.Unmarshal(b, v)
-	if err != nil {
-		return nil, err
-	}
-
-	return v, nil
+	eop *encrypted_object.EncryptedObjectParser
 }
 
 // Parse examines the supplied value and extracts the Value from it,
@@ -61,8 +35,7 @@ func (cp *EncryptableValueParser) Parse(e *EncryptableValue) (*value.Value, erro
 	case *EncryptableValue_E:
 		{
 			var err error
-			v, err = cp.decryptValue(x.E)
-			if err != nil {
+			if err = cp.eop.Parse(x.E, v); err != nil {
 				return nil, err
 			}
 		}
