@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option go_package = "github.com/gford1000-go/protobuf/types/row";
+
+message RowPartition {
+    int64 rowId = 1;
+    map<int32, bytes> attributeValues = 2;
+}
+
