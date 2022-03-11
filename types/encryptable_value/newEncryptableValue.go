@@ -11,7 +11,7 @@ func NewEncryptableValue(keyToken []byte, v *value.Value, encryptionRequired boo
 	e := &EncryptableValue{}
 
 	if encryptionRequired {
-		eo, err := encryption.NewEncryptedObject(keyToken, v, encryptor)
+		eo, err := encryption.NewEncryptedObjectFromToken(keyToken, v, encryptor)
 		if err != nil {
 			return nil, err
 		}

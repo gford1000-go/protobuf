@@ -18,8 +18,7 @@ func TestValue(t *testing.T) {
 		false,
 	}
 
-	e := encryption.NewGCMTokenKeyEncryptor()
-	d := encryption.NewGCMTokenKeyDecryptor(e.GetKeys())
+	masterKey := []byte("0123456789abcdef") // Should be random
 
 	for _, i := range testData {
 
@@ -27,9 +26,21 @@ func TestValue(t *testing.T) {
 
 		for _, encrypt := range []bool{true, false} {
 
+			e := encryption.NewGCMTokenKeyEncryptor()
+
 			eo, err := NewEncryptableValue([]byte("Token1"), v, encrypt, e)
 			if err != nil {
 				t.Errorf("failed to encrypt: %v", err)
+			}
+
+			k, err := e.GetKeys(masterKey)
+			if err != nil {
+				t.Errorf("failed to get encryption keys: %v", err)
+			}
+
+			d, err := encryption.NewGCMTokenKeyDecryptor(masterKey, k)
+			if err != nil {
+				t.Errorf("failed to create decryptor: %v", err)
 			}
 
 			p, _ := NewEncryptableValueParser(d)
