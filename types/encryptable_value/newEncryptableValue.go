@@ -1,7 +1,6 @@
 package encryptable_value
 
 import (
-	"github.com/gford1000-go/protobuf/types/encrypted_object"
 	"github.com/gford1000-go/protobuf/types/encryption"
 	"github.com/gford1000-go/protobuf/types/value"
 )
@@ -12,7 +11,7 @@ func NewEncryptableValue(keyToken []byte, v *value.Value, encryptionRequired boo
 	e := &EncryptableValue{}
 
 	if encryptionRequired {
-		eo, err := encrypted_object.NewEncryptedObject(keyToken, v, encryptor)
+		eo, err := encryption.NewEncryptedObject(keyToken, v, encryptor)
 		if err != nil {
 			return nil, err
 		}

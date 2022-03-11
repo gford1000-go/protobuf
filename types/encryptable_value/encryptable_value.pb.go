@@ -7,7 +7,7 @@
 package encryptable_value
 
 import (
-	encrypted_object "github.com/gford1000-go/protobuf/types/encrypted_object"
+	encryption "github.com/gford1000-go/protobuf/types/encryption"
 	value "github.com/gford1000-go/protobuf/types/value"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -72,7 +72,7 @@ func (m *EncryptableValue) GetC() isEncryptableValue_C {
 	return nil
 }
 
-func (x *EncryptableValue) GetE() *encrypted_object.EncryptedObject {
+func (x *EncryptableValue) GetE() *encryption.EncryptedObject {
 	if x, ok := x.GetC().(*EncryptableValue_E); ok {
 		return x.E
 	}
@@ -91,7 +91,7 @@ type isEncryptableValue_C interface {
 }
 
 type EncryptableValue_E struct {
-	E *encrypted_object.EncryptedObject `protobuf:"bytes,2,opt,name=e,proto3,oneof"`
+	E *encryption.EncryptedObject `protobuf:"bytes,2,opt,name=e,proto3,oneof"`
 }
 
 type EncryptableValue_V struct {
@@ -135,9 +135,9 @@ func file_encryptable_value_proto_rawDescGZIP() []byte {
 
 var file_encryptable_value_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_encryptable_value_proto_goTypes = []interface{}{
-	(*EncryptableValue)(nil),                 // 0: EncryptableValue
-	(*encrypted_object.EncryptedObject)(nil), // 1: EncryptedObject
-	(*value.Value)(nil),                      // 2: Value
+	(*EncryptableValue)(nil),           // 0: EncryptableValue
+	(*encryption.EncryptedObject)(nil), // 1: EncryptedObject
+	(*value.Value)(nil),                // 2: Value
 }
 var file_encryptable_value_proto_depIdxs = []int32{
 	1, // 0: EncryptableValue.e:type_name -> EncryptedObject
