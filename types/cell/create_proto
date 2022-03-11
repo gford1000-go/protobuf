@@ -3,4 +3,4 @@
 GOPATH=/users/gford1000/Go
 TYPES=$GOPATH/src/github.com/gford1000-go/protobuf/types
 
-protoc -I=/usr/local/include -I=$TYPES/encryptable_value -I=$TYPES/encrypted_object -I=$TYPES/value -I=$TYPES/encryption --go_out=$GOPATH/src --proto_path=. cell.proto
+protoc -I=/usr/local/include -I=$TYPES/encryptable_value -I=$TYPES/value -I=$TYPES/encryption --go_out=$GOPATH/src --proto_path=. cell.proto

@@ -40,45 +40,6 @@ func createValue() interface{} {
 	return data[rand.Intn(len(data))]
 }
 
-func displayValue(i interface{}) {
-
-	if i == nil {
-		fmt.Printf("Nil\n")
-		return
-	}
-
-	switch x := i.(type) {
-	case string:
-		{
-			fmt.Printf("String: %v\n", x)
-		}
-	case int32:
-		{
-			fmt.Printf("Int32:  %v\n", x)
-		}
-	case float64:
-		{
-			fmt.Printf("Double: %v\n", x)
-		}
-	case bool:
-		{
-			fmt.Printf("Bool:   %v\n", x)
-		}
-	case []interface{}:
-		{
-			fmt.Printf("List:   %v\n", x)
-		}
-	case map[string]interface{}:
-		{
-			fmt.Printf("Map:    %v\n", x)
-		}
-	default:
-		{
-			fmt.Println("Not found!")
-		}
-	}
-}
-
 // keyToken holds a token and whether encryption is required
 type keyToken struct {
 	token   []byte
@@ -120,19 +81,13 @@ func (d *dummyKeyManager) Encrypt(keyToken []byte) bool {
 func ExampleCellBuilder() {
 	rand.Seed(time.Now().Unix())
 
-	// For this example, ensure encryptors and decryptors observe the same map
-	e := encryption.NewGCMTokenKeyEncryptor()
-	d := encryption.NewGCMTokenKeyDecryptor(e.GetKeys())
-
 	// This emulates logic that has assigned keyTokens to the contents of each Cell
 	km := &dummyKeyManager{}
 	km.init(100)
 
+	e := encryption.NewGCMTokenKeyEncryptor()
+
 	cb, err := NewCellBuilder(e)
-	if err != nil {
-		panic(err)
-	}
-	cp, err := NewCellParser(d)
 	if err != nil {
 		panic(err)
 	}
@@ -145,6 +100,18 @@ func ExampleCellBuilder() {
 	// would typically need awareness of other data but here we
 	// use the dummyKeyManager to assign randomly
 	data, _ := cb.Marshal(i, km, km)
+
+	// Get the keys used to encrypt the cell
+	// need to supply a master key with which they are secured
+	masterKey := []byte("0123456789abcdef") // Should be random
+	k, _ := e.GetKeys(masterKey)
+
+	// The decryptor is initialised by providing the secured keys
+	// and the masterKey
+	d, _ := encryption.NewGCMTokenKeyDecryptor(masterKey, k)
+
+	// Create a cell parser, supplying the decryptor
+	cp, _ := NewCellParser(d)
 
 	// Parse a Cell back to its constituent Value(s).  For now the
 	// Cell only supports scalar entries (i.e. only one Value, which
