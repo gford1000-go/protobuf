@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/gford1000-go/protobuf/types/cell"
-	"github.com/gford1000-go/protobuf/types/encrypted_object"
+	"github.com/gford1000-go/protobuf/types/encryption"
 	"github.com/gford1000-go/protobuf/types/value"
 	"google.golang.org/protobuf/proto"
 )
@@ -24,7 +24,7 @@ func NewRowParser(r RowDecryptionInterfacesRetriever, mapper AttributeFromIdenti
 	if r == nil {
 		return nil, errInvalidRowDecryptionInterfacesRetriever
 	}
-	p, err := encrypted_object.NewEncryptedObjectParser(r.GetRowTokenKeyDecryptor())
+	p, err := encryption.NewEncryptedObjectParser(r.GetRowTokenKeyDecryptor())
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,7 @@ func NewRowParser(r RowDecryptionInterfacesRetriever, mapper AttributeFromIdenti
 type RowParser struct {
 	m AttributeFromIdentifier
 	r RowDecryptionInterfacesRetriever
-	p *encrypted_object.EncryptedObjectParser
+	p *encryption.EncryptedObjectParser
 }
 
 // Parse returns an instance of Row, unpacking the serialised
@@ -45,7 +45,7 @@ type RowParser struct {
 func (rp *RowParser) Parse(data []byte) (*Row, error) {
 
 	// data should be a marshaled EncryptedObject
-	eo := &encrypted_object.EncryptedObject{}
+	eo := &encryption.EncryptedObject{}
 	err := proto.Unmarshal(data, eo)
 	if err != nil {
 		return nil, err

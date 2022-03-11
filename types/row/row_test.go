@@ -61,10 +61,8 @@ type controller struct {
 }
 
 // init creates some dummy key tokens
-func (e *controller) init(d encryption.TokenKeyDecryptor, nRows int, attributeNames []AttributeName) {
+func (e *controller) init(nRows int, attributeNames []AttributeName) {
 	rand.Seed(99) // Used to consistently randomise whether a cell should be encrypted
-
-	e.d = d // Same decryptor used for both row and cells
 
 	e.nToi = make(map[AttributeName]AttributeIdentifier)
 	e.iTon = make(map[AttributeIdentifier]AttributeName)
@@ -87,6 +85,11 @@ func (e *controller) init(d encryption.TokenKeyDecryptor, nRows int, attributeNa
 		}
 		e.keyTokens = append(e.keyTokens, kt)
 	}
+}
+
+func (e *controller) createDecryptor(keys []byte, eo *encryption.EncryptedObject) {
+	d, _ := encryption.NewGCMTokenKeyDecryptor(keys, eo)
+	e.d = d
 }
 
 func (e *controller) FindName(i AttributeIdentifier) (AttributeName, error) {
@@ -144,31 +147,30 @@ func ExampleRowBuilder() {
 	// has the same type for a given name
 	rows := createRows()
 
+	// This class implements all the interfaces required to serialise
+	// and deserialise the data in the row
+	c := &controller{}
+	c.init(len(rows), rows[0].GetAttributeNames())
+
 	// For this example, ensure encryptors and decryptors observe
 	// the same map of token->key, so that decryption is successful.
 	// In normal use, the data requestor will only have a subset of
 	// the full map, which controls their access to data.
 	e := encryption.NewGCMTokenKeyEncryptor()
-	d := encryption.NewGCMTokenKeyDecryptor(e.GetKeys())
 
-	// This class implements all the interfaces required to serialise
-	// and deserialise the data in the row
-	c := &controller{}
-	c.init(d, len(rows), rows[0].GetAttributeNames())
-
-	cb, err := NewRowBuilder(e, c)
-	if err != nil {
-		panic(err)
-	}
-	cp, err := NewRowParser(c, c)
-	if err != nil {
-		panic(err)
-	}
+	cb, _ := NewRowBuilder(e, c)
 
 	// Marshal the contents of the Row.
 	// The row is serialised and encrypted, as well as
 	// potentially encrypting specific cell values
 	data, _ := cb.Marshal(rows[0].GetID(), rows[0].GetAll(), c)
+
+	// Transfer the encryption keys to the controller object
+	masterKey := []byte("0123456789abcdef") // Should be random
+	keys, _ := e.GetKeys(masterKey)
+	c.createDecryptor(masterKey, keys)
+
+	cp, _ := NewRowParser(c, c)
 
 	// Parse the encrypted row bytes, unpacking to return a
 	// Row instance, with access to the attributes and their values

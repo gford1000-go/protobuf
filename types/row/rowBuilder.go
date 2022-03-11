@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/gford1000-go/protobuf/types/cell"
-	"github.com/gford1000-go/protobuf/types/encrypted_object"
 	"github.com/gford1000-go/protobuf/types/encryption"
 	"google.golang.org/protobuf/proto"
 )
@@ -66,7 +65,7 @@ func (rb *RowBuilder) Marshal(rowID RowID, i map[AttributeName]interface{}, r Ro
 		AttributeValues: attValues,
 	}
 
-	eo, err := encrypted_object.NewEncryptedObject(rowToken, rp, rb.e)
+	eo, err := encryption.NewEncryptedObjectFromToken(rowToken, rp, rb.e)
 	if err != nil {
 		return nil, err
 	}
