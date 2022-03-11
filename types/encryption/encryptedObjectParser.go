@@ -36,7 +36,7 @@ func (cp *EncryptedObjectParser) Parse(e *EncryptedObject, message protoreflect.
 		return err
 	}
 
-	b, err := cp.d.Decrypt(e.GetKeyToken(), a, e.V)
+	b, err := cp.d.DecryptFromToken(e.GetKeyToken(), a, e.V)
 	if err != nil {
 		return err
 	}

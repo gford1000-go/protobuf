@@ -18,8 +18,8 @@ type GCMTokenKeyDecryptor struct {
 	keys map[string][]byte
 }
 
-// Decrypt attempts to decrypt using the key associated with the token.
-func (g *GCMTokenKeyDecryptor) Decrypt(keyToken []byte, algo Algorithm, ciphertext []byte) ([]byte, error) {
+// DecryptFromToken attempts to decrypt using the key associated with the token.
+func (g *GCMTokenKeyDecryptor) DecryptFromToken(keyToken []byte, algo Algorithm, ciphertext []byte) ([]byte, error) {
 	if algo != GCM {
 		return nil, errDecryptionError
 	}

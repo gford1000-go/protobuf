@@ -4,5 +4,5 @@ package encryption
 // the key required to decrypt and the algo to use to attempt decryption.
 // Behaviour when the key is not available is unspecified.
 type TokenKeyDecryptor interface {
-	Decrypt(token []byte, a Algorithm, ciphertext []byte) ([]byte, error)
+	DecryptFromToken(token []byte, a Algorithm, ciphertext []byte) ([]byte, error)
 }

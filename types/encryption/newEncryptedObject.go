@@ -14,7 +14,7 @@ func NewEncryptedObject(keyToken []byte, message protoreflect.ProtoMessage, encr
 		return nil, err
 	}
 
-	e, a, err := encryptor.Encrypt(keyToken, b)
+	e, a, err := encryptor.EncryptFromToken(keyToken, b)
 	if err != nil {
 		return nil, err
 	}

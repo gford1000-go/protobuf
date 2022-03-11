@@ -22,8 +22,8 @@ func (g *GCMTokenKeyEncryptor) GetKeys() map[string][]byte {
 	return g.keys
 }
 
-// Encrypt attempts to decrypt using the key associated with the token.
-func (g *GCMTokenKeyEncryptor) Encrypt(keyToken []byte, plaintext []byte) ([]byte, Algorithm, error) {
+// EncryptFromToken attempts to decrypt using the key associated with the token.
+func (g *GCMTokenKeyEncryptor) EncryptFromToken(keyToken []byte, plaintext []byte) ([]byte, Algorithm, error) {
 	if len(keyToken) == 0 {
 		return nil, Unknown, errInvalidKeyToken
 	}
