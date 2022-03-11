@@ -17,16 +17,29 @@ func TestObject(t *testing.T) {
 		false,
 	}
 
-	e := NewGCMTokenKeyEncryptor()
-	d := NewGCMTokenKeyDecryptor(e.GetKeys())
+	masterKey := []byte("0123456789abcdef") // Should be random
 
 	for _, i := range testData {
 
+		e := NewGCMTokenKeyEncryptor()
+
 		v, _ := value.NewValue(i)
 
-		eo, err := NewEncryptedObject([]byte("Token1"), v, e)
+		eo, err := NewEncryptedObjectFromToken([]byte("Token1"), v, e)
 		if err != nil {
-			t.Errorf("failed to encrypt: %v", err)
+			t.Errorf("failed to encrypt %v: %v", i, err)
+		}
+
+		// Illustrates secure extraction of keys from encryptor
+		encryptedKeys, err := e.GetKeys(masterKey)
+		if err != nil {
+			t.Errorf("failed to get encrypted keys: %v", err)
+		}
+
+		// Populate using the encrypted keys from the extractor
+		d, err := NewGCMTokenKeyDecryptor(masterKey, encryptedKeys)
+		if err != nil {
+			t.Errorf("failed to decrypt keys: %v", err)
 		}
 
 		p, _ := NewEncryptedObjectParser(d)
@@ -45,4 +58,5 @@ func TestObject(t *testing.T) {
 			t.Errorf("failed to match: wanted %v, got %v", i, i1)
 		}
 	}
+
 }

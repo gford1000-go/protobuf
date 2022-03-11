@@ -2,15 +2,36 @@ package encryption
 
 import (
 	"errors"
+
+	"google.golang.org/protobuf/proto"
 )
 
 var errMissingKeyToken = errors.New("keyToken not found")
 var errDecryptionError = errors.New("error during decryption")
 
 // NewGCMTokenKeyDecryptor returns a new instance of GCMTokenKeyDecryptor,
-// prefilled with the specified set of key tokens and associated keys
-func NewGCMTokenKeyDecryptor(keys map[string][]byte) *GCMTokenKeyDecryptor {
-	return &GCMTokenKeyDecryptor{keys: keys}
+// prefilled with the specified set of key tokens and associated keys that
+// have been retrieved from the encrypted object using the specified key
+func NewGCMTokenKeyDecryptor(key []byte, keys *EncryptedObject) (*GCMTokenKeyDecryptor, error) {
+
+	a, err := ParseAlgo(keys.A)
+	if err != nil {
+		return nil, err
+	}
+
+	g := &GCMTokenKeyDecryptor{}
+	b, err := g.Decrypt(key, a, keys.V)
+	if err != nil {
+		return nil, err
+	}
+
+	k := &Keys{}
+	err = proto.Unmarshal(b, k)
+	if err != nil {
+		return nil, err
+	}
+
+	return &GCMTokenKeyDecryptor{keys: k.GetKeys()}, nil
 }
 
 // GCMTokenKeyDecryptor implements TokenKeyDecryptor for GCM symmetric encryption

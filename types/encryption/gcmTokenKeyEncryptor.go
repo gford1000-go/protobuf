@@ -17,9 +17,15 @@ type GCMTokenKeyEncryptor struct {
 	keys map[string][]byte
 }
 
-// GetKeys returns the map of key tokens to their associated keys
-func (g *GCMTokenKeyEncryptor) GetKeys() map[string][]byte {
-	return g.keys
+// GetKeys returns the map of key tokens to their associated keys,
+// encrypted using the specified key and the GCM algorithm
+func (g *GCMTokenKeyEncryptor) GetKeys(key []byte) (*EncryptedObject, error) {
+
+	k := &Keys{
+		Keys: g.keys,
+	}
+
+	return NewEncryptedObject(key, k, g)
 }
 
 // EncryptFromToken attempts to encrypt using the key associated with the token.
