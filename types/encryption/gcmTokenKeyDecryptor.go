@@ -20,16 +20,21 @@ type GCMTokenKeyDecryptor struct {
 
 // DecryptFromToken attempts to decrypt using the key associated with the token.
 func (g *GCMTokenKeyDecryptor) DecryptFromToken(keyToken []byte, algo Algorithm, ciphertext []byte) ([]byte, error) {
-	if algo != GCM {
-		return nil, errDecryptionError
-	}
-
 	k, ok := g.keys[string(keyToken)]
 	if !ok {
 		return nil, errMissingKeyToken
 	}
 
-	gcm, err := NewGCMEncryptor(k)
+	return g.Decrypt(k, algo, ciphertext)
+}
+
+// Decrypt attempts to decrypt using the key.
+func (g *GCMTokenKeyDecryptor) Decrypt(key []byte, algo Algorithm, ciphertext []byte) ([]byte, error) {
+	if algo != GCM {
+		return nil, errDecryptionError
+	}
+
+	gcm, err := NewGCMEncryptor(key)
 	if err != nil {
 		return nil, errDecryptionError
 	}
