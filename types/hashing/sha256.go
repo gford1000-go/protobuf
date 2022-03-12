@@ -58,6 +58,10 @@ func (sms *stringizeMapSlice) Swap(i, j int) {
 }
 
 func (s *sha256Hasher) stringize(i interface{}) string {
+	if i == nil {
+		return "<nil>"
+	}
+
 	var ret string
 	switch reflect.TypeOf(i).Kind() {
 	case reflect.Slice:
