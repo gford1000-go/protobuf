@@ -22,6 +22,7 @@ var data = []testData{
 	{data: []interface{}{}, expectError: false},
 	{data: map[string]interface{}{}, expectError: false},
 	{data: time.Now(), expectError: false},
+	{data: new(int64), expectError: false},
 	{
 		data: []interface{}{
 			int64(5678),
@@ -105,8 +106,29 @@ func TestParse(t *testing.T) {
 			}
 		default:
 			{
-				if fmt.Sprint(d.data) != fmt.Sprint(i) {
-					t.Errorf("parsed value does not match original for %v (parsed: %v)", d.data, i)
+				if d.data == nil {
+					if i != nil {
+						t.Errorf("parsed value does not match original for %v (parsed: %v)", d.data, i)
+					}
+				} else {
+					switch reflect.TypeOf(d.data).Kind() {
+					case reflect.Ptr:
+						{
+							f := func(d interface{}) interface{} {
+								return reflect.ValueOf(d).Elem().Interface()
+							}
+
+							if fmt.Sprint(f(d.data)) != fmt.Sprint(f(i)) {
+								t.Errorf("parsed value does not match original for %v (parsed: %v)", d.data, i)
+							}
+						}
+					default:
+						{
+							if fmt.Sprint(d.data) != fmt.Sprint(i) {
+								t.Errorf("parsed value does not match original for %v (parsed: %v)", d.data, i)
+							}
+						}
+					}
 				}
 			}
 		}

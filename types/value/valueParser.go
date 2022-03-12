@@ -36,6 +36,12 @@ func ParseValue(v *Value) (interface{}, error) {
 		{
 			i = x.I64
 		}
+	case *Value_Pi64:
+		{
+			v := new(int64)
+			*v = x.Pi64
+			i = v
+		}
 	case *Value_U32:
 		{
 			i = x.U32

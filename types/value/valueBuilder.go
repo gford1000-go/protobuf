@@ -34,6 +34,10 @@ func NewValue(i interface{}) (*Value, error) {
 		{
 			v = &Value{V: &Value_I64{I64: x}}
 		}
+	case *int64:
+		{
+			v = &Value{V: &Value_Pi64{Pi64: *x}}
+		}
 	case uint32:
 		{
 			v = &Value{V: &Value_U32{U32: x}}

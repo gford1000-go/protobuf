@@ -1,0 +1,6 @@
+#!/bin/sh
+
+GOPATH=/users/gford1000/Go
+TYPES=$GOPATH/src/github.com/gford1000-go/protobuf/types
+
+protoc -I=/usr/local/include --go_out=$GOPATH/src --proto_path=. value.proto

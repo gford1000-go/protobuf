@@ -1,0 +1,12 @@
+#!/bin/sh
+
+TYPES=github.com/gford1000-go/protobuf/types
+MODULE="$(pwd | rev | cut -d'/' -f1 | rev)"
+
+rm go.sum
+rm go.mod
+
+go mod init $TYPES/$MODULE
+go mod tidy
+go install
+

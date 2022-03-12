@@ -13,23 +13,38 @@ message Value {
   }
 
   oneof v {
-    bool isNull = 17;
-    bytes x = 1;
-    bool b = 2;
-    string s = 3;
-    double d = 4;
-    float f = 5;
-    int32 i32 = 6;
-    int64 i64 = 7;
-    uint32 u32 = 8;
-    uint64 u64 = 9;
-    sint32 s32 = 10;
-    sint64 s64 = 11;
-    fixed32 f32 = 12;
-    fixed64 f64 = 13;
-    google.protobuf.Timestamp t = 14;
-    ValueMap m = 15;
-    ValueList l = 16;
+    bool isNull = 1;
+    bytes x = 2;
+    bool b = 3;
+    bool pb = 4;
+    string s = 5;
+    string ps = 6;
+    double d = 7;
+    double pd = 8;
+    float f = 9;
+    float pf = 10;
+    int32 i32 = 11;
+    int32 pi32 = 12;
+    int64 i64 = 13;
+    int64 pi64 = 14;
+    uint32 u32 = 15;
+    uint32 pu32 = 16;
+    uint64 u64 = 17;
+    uint64 pu64 = 18;
+    sint32 s32 = 19;
+    sint32 ps32 = 20;
+    sint64 s64 = 21;
+    sint64 ps64 = 22;
+    fixed32 f32 = 23;
+    fixed32 pf32 = 24;
+    fixed64 f64 = 25;
+    fixed64 pf64 = 26;
+    google.protobuf.Timestamp t = 27;
+    google.protobuf.Timestamp pt = 28;
+    int64 dur = 29;
+    int64 pdur = 30;    
+    ValueMap m = 31;
+    ValueList l = 32;
   }
 }
 
