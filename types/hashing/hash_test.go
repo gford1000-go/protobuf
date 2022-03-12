@@ -32,10 +32,14 @@ func TestDefault(t *testing.T) {
 	data := []testData{
 		{int64(1), "dd712114fb283417de4da3512e17486adbda004060d0d1646508c8a2740d29b4"},
 		{float32(-9992.3), "3568d479b826f1750d31755023a387a623cbbf97358841fbccf2af2e8f833880"},
+		{[]int64{1, 2, 3, 4, 5}, "cd5b761f3877aacab78715384f023546cbf462b1ece14de26f7e1ebad1ac591e"},
+		{map[string]interface{}{"a": 1, "b": "Hello", "c": []float64{2.3, 4.5}}, "50c7d2d1b89d346e1386244aa4d011c963795036064c6367838277f3c421e20d"},
+		{map[string]interface{}{"b": "Hello", "a": 1, "c": []float64{2.3, 4.5}}, "50c7d2d1b89d346e1386244aa4d011c963795036064c6367838277f3c421e20d"},
 	}
 
 	for _, d := range data {
 		if fmt.Sprintf("%x", h.Hash(d.i).H) != d.h {
+			fmt.Printf("%x\n", h.Hash(d.i).H)
 			t.Fatalf("Mismatch in hash for %v\n", d.i)
 		}
 	}
@@ -56,6 +60,97 @@ func TestRepeated(t *testing.T) {
 
 	if h1 != h2 || h1 != h12345 || h2 != h12345 {
 		t.Fatal("Mismatch in repeated hashing of the same value")
+	}
+}
+
+func TestSlicesEqual(t *testing.T) {
+
+	h, err := DefaultFactory.GetHasherWithSalt(SHA256, []byte("12345"))
+	if err != nil {
+		t.Fatal("Unable to retrieve SHA256 Hasher")
+	}
+
+	h1 := h.Hash([]int64{1, 2, 3}).H
+	h2 := h.Hash([]int64{2, 3, 1}).H
+	h3 := h.Hash([]int64{2, 1, 3}).H
+
+	if !bytes.Equal(h1, h2) || !bytes.Equal(h1, h3) {
+		t.Fatal("Slice equialence error")
+	}
+}
+
+func TestSlicesDifferent(t *testing.T) {
+
+	h, err := DefaultFactory.GetHasherWithSalt(SHA256, []byte("12345"))
+	if err != nil {
+		t.Fatal("Unable to retrieve SHA256 Hasher")
+	}
+
+	h1 := h.Hash([]int64{1, 2, 3}).H
+	h2 := h.Hash([]int64{2, 3, 4}).H
+
+	if bytes.Equal(h1, h2) {
+		t.Fatal("Slices the same, when should be different")
+	}
+}
+
+func TestSlicesOfInterfaces(t *testing.T) {
+
+	h, err := DefaultFactory.GetHasherWithSalt(SHA256, []byte("12345"))
+	if err != nil {
+		t.Fatal("Unable to retrieve SHA256 Hasher")
+	}
+
+	h1 := h.Hash([]interface{}{1, 2, 3}).H
+	h2 := h.Hash([]interface{}{1, 2, 3}).H
+
+	if !bytes.Equal(h1, h2) {
+		t.Fatal("Slices the same, hashes should not be different")
+	}
+}
+
+func TestSlicesOfDifferentTypes(t *testing.T) {
+
+	h, err := DefaultFactory.GetHasherWithSalt(SHA256, []byte("12345"))
+	if err != nil {
+		t.Fatal("Unable to retrieve SHA256 Hasher")
+	}
+
+	h1 := h.Hash([]interface{}{1, "Hello", float64(3.22)}).H
+	h2 := h.Hash([]interface{}{1, "Hello", float64(3.22)}).H
+
+	if !bytes.Equal(h1, h2) {
+		t.Fatal("Slices the same, hashes should not be different")
+	}
+}
+
+func TestSlicesOfDifferentTypesAndOrders(t *testing.T) {
+
+	h, err := DefaultFactory.GetHasherWithSalt(SHA256, []byte("12345"))
+	if err != nil {
+		t.Fatal("Unable to retrieve SHA256 Hasher")
+	}
+
+	h1 := h.Hash([]interface{}{1, "Hello", float64(3.22)}).H
+	h2 := h.Hash([]interface{}{"Hello", 1, float64(3.22)}).H
+
+	if !bytes.Equal(h1, h2) {
+		t.Fatal("Slices equivalent, hashes should not be different")
+	}
+}
+
+func TestNestedSlicesOfDifferentTypesAndOrders(t *testing.T) {
+
+	h, err := DefaultFactory.GetHasherWithSalt(SHA256, []byte("12345"))
+	if err != nil {
+		t.Fatal("Unable to retrieve SHA256 Hasher")
+	}
+
+	h1 := h.Hash([]interface{}{1, []interface{}{"Hello", "World", 2}, float64(3.22)}).H
+	h2 := h.Hash([]interface{}{[]interface{}{"Hello", "World", 2}, 1, float64(3.22)}).H
+
+	if !bytes.Equal(h1, h2) {
+		t.Fatal("Slices equivalent, hashes should not be different")
 	}
 }
 
