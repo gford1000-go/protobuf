@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gford1000-go/protobuf/types/encryption"
+	"github.com/gford1000-go/protobuf/types/hashing"
 	"github.com/gford1000-go/protobuf/types/value"
 )
 
@@ -85,12 +86,12 @@ func ExampleCellBuilder() {
 	km := &dummyKeyManager{}
 	km.init(100)
 
+	// Create the Hasher that returns the hash of the cell's value
+	h, _ := hashing.DefaultFactory.GetHasher(hashing.SHA256)
+
 	e := encryption.NewGCMTokenKeyEncryptor()
 
-	cb, err := NewCellBuilder(e)
-	if err != nil {
-		panic(err)
-	}
+	cb, _ := NewCellBuilder(e, h)
 
 	// This is the cell's value
 	i := createValue()
@@ -99,7 +100,7 @@ func ExampleCellBuilder() {
 	// correct keyToken and apply encryption as required - this
 	// would typically need awareness of other data but here we
 	// use the dummyKeyManager to assign randomly
-	data, _ := cb.Marshal(i, km, km)
+	data, _, _ := cb.Marshal(i, km, km)
 
 	// Get the keys used to encrypt the cell
 	// need to supply a master key with which they are secured
