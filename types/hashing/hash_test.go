@@ -29,12 +29,22 @@ func TestDefault(t *testing.T) {
 		h string
 	}
 
+	type testStruct struct {
+		a int64
+		b string
+	}
+
 	data := []testData{
 		{int64(1), "dd712114fb283417de4da3512e17486adbda004060d0d1646508c8a2740d29b4"},
 		{float32(-9992.3), "3568d479b826f1750d31755023a387a623cbbf97358841fbccf2af2e8f833880"},
 		{[]int64{1, 2, 3, 4, 5}, "cd5b761f3877aacab78715384f023546cbf462b1ece14de26f7e1ebad1ac591e"},
 		{map[string]interface{}{"a": 1, "b": "Hello", "c": []float64{2.3, 4.5}}, "50c7d2d1b89d346e1386244aa4d011c963795036064c6367838277f3c421e20d"},
 		{map[string]interface{}{"b": "Hello", "a": 1, "c": []float64{2.3, 4.5}}, "50c7d2d1b89d346e1386244aa4d011c963795036064c6367838277f3c421e20d"},
+		{[]*testStruct{{a: 1, b: "Hi"}, {a: 2, b: "There"}}, "20dfd7869c5d4609cf7afdf09ae8dc0967e554e10b8d8200b30834405fd7e4ca"},
+		{[]*testStruct{{a: 2, b: "There"}, {a: 1, b: "Hi"}}, "20dfd7869c5d4609cf7afdf09ae8dc0967e554e10b8d8200b30834405fd7e4ca"},
+		{[]*[]int64{{7, 8, 9, 0}, {1, 2, 3, 4}}, "ee2d93a36e99ca976ff5ec139e8c5e595f92160c203e6215d74f75f29cebe413"},
+		{map[int]*testStruct{1: {a: 1, b: "Hi"}, 2: {a: 2, b: "There"}}, "b0779c149603990ff73355a065894126966bdc129ffac6c4db07f5fb760b1e5a"},
+		{map[int]*testStruct{2: {a: 2, b: "There"}, 1: {a: 1, b: "Hi"}}, "b0779c149603990ff73355a065894126966bdc129ffac6c4db07f5fb760b1e5a"},
 	}
 
 	for _, d := range data {
