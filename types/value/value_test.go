@@ -13,7 +13,16 @@ type testData struct {
 	expectError bool
 }
 
-var data = []testData{
+func testCopyInterface(dst, src interface{}) interface{} {
+	if reflect.TypeOf(dst).Kind() == reflect.Ptr {
+		reflect.ValueOf(dst).Elem().Set(reflect.ValueOf(src))
+		return dst
+	} else {
+		return src
+	}
+}
+
+var testDataSet = []testData{
 	{data: "Hello World", expectError: false},
 	{data: int32(1234), expectError: false},
 	{data: float64(9999.99), expectError: false},
@@ -22,7 +31,6 @@ var data = []testData{
 	{data: []interface{}{}, expectError: false},
 	{data: map[string]interface{}{}, expectError: false},
 	{data: time.Now(), expectError: false},
-	{data: new(int64), expectError: false},
 	{
 		data: []interface{}{
 			int64(5678),
@@ -50,8 +58,18 @@ var data = []testData{
 	},
 	{
 		data:        time.Since(time.Now()),
-		expectError: true,
+		expectError: false,
 	},
+	{data: testCopyInterface(new(bool), true), expectError: false},
+	{data: testCopyInterface(new(int32), int32(19)), expectError: false},
+	{data: testCopyInterface(new(int64), int64(19)), expectError: false},
+	{data: testCopyInterface(new(uint32), uint32(19)), expectError: false},
+	{data: testCopyInterface(new(uint64), uint64(19)), expectError: false},
+	{data: testCopyInterface(new(float32), float32(19)), expectError: false},
+	{data: testCopyInterface(new(float64), float64(19)), expectError: false},
+	{data: testCopyInterface(new(string), "Hello World"), expectError: false},
+	{data: testCopyInterface(new(time.Time), time.Now()), expectError: false},
+	{data: testCopyInterface(new(time.Duration), time.Duration(1234567890)), expectError: false},
 	{
 		data:        &testData{},
 		expectError: true,
@@ -59,7 +77,8 @@ var data = []testData{
 }
 
 func TestNewValue(t *testing.T) {
-	for _, d := range data {
+
+	for _, d := range testDataSet {
 		_, err := NewValue(d.data)
 		if err != nil && !d.expectError {
 			t.Errorf("failed to create Value for %v (type: %v)", d.data, reflect.TypeOf(d.data))
@@ -71,7 +90,7 @@ func TestNewValue(t *testing.T) {
 }
 
 func TestParse(t *testing.T) {
-	for _, d := range data {
+	for _, d := range testDataSet {
 		if d.expectError {
 			continue
 		}
@@ -93,6 +112,24 @@ func TestParse(t *testing.T) {
 				// but is not meant for debugging only: see
 				// https://pkg.go.dev/time#Time.String
 				tm, ok := i.(time.Time)
+				if !ok {
+					t.Fatal("Unexpected error")
+				}
+
+				di, _ := x.MarshalText()
+				ii, _ := tm.MarshalText()
+
+				if !bytes.Equal(di, ii) {
+					t.Errorf("parsed value does not match original for %v (parsed: %v)", di, ii)
+				}
+			}
+		case *time.Time:
+			{
+				// time.Time is a special case here, since
+				// time.Time.String() is invoked by Sprint
+				// but is not meant for debugging only: see
+				// https://pkg.go.dev/time#Time.String
+				tm, ok := i.(*time.Time)
 				if !ok {
 					t.Fatal("Unexpected error")
 				}

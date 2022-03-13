@@ -22,6 +22,10 @@ func NewValue(i interface{}) (*Value, error) {
 		{
 			v = &Value{V: &Value_B{B: x}}
 		}
+	case *bool:
+		{
+			v = &Value{V: &Value_Pb{Pb: *x}}
+		}
 	case []byte:
 		{
 			v = &Value{V: &Value_X{X: x}}
@@ -29,6 +33,10 @@ func NewValue(i interface{}) (*Value, error) {
 	case int32:
 		{
 			v = &Value{V: &Value_I32{I32: x}}
+		}
+	case *int32:
+		{
+			v = &Value{V: &Value_Pi32{Pi32: *x}}
 		}
 	case int64:
 		{
@@ -42,21 +50,41 @@ func NewValue(i interface{}) (*Value, error) {
 		{
 			v = &Value{V: &Value_U32{U32: x}}
 		}
+	case *uint32:
+		{
+			v = &Value{V: &Value_Pu32{Pu32: *x}}
+		}
 	case uint64:
 		{
 			v = &Value{V: &Value_U64{U64: x}}
+		}
+	case *uint64:
+		{
+			v = &Value{V: &Value_Pu64{Pu64: *x}}
 		}
 	case float32:
 		{
 			v = &Value{V: &Value_F{F: x}}
 		}
+	case *float32:
+		{
+			v = &Value{V: &Value_Pf{Pf: *x}}
+		}
 	case float64:
 		{
 			v = &Value{V: &Value_D{D: x}}
 		}
+	case *float64:
+		{
+			v = &Value{V: &Value_Pd{Pd: *x}}
+		}
 	case string:
 		{
 			v = &Value{V: &Value_S{S: x}}
+		}
+	case *string:
+		{
+			v = &Value{V: &Value_Ps{Ps: *x}}
 		}
 	case time.Time:
 		{
@@ -66,6 +94,23 @@ func NewValue(i interface{}) (*Value, error) {
 					Nanos:   int32(x.Nanosecond()),
 				}},
 			}
+		}
+	case *time.Time:
+		{
+			v = &Value{V: &Value_Pt{
+				Pt: &timestamppb.Timestamp{
+					Seconds: x.Unix(),
+					Nanos:   int32(x.Nanosecond()),
+				}},
+			}
+		}
+	case time.Duration:
+		{
+			v = &Value{V: &Value_Dur{Dur: int64(x)}}
+		}
+	case *time.Duration:
+		{
+			v = &Value{V: &Value_Pdur{Pdur: int64(*x)}}
 		}
 	case map[string]interface{}:
 		{
