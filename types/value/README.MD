@@ -10,7 +10,7 @@ Types supported:
 * `time.Time` and `time.Duration`
 * Pointers of the basic types and the time types
 * `map[string]interface{}`, where `interface{}` can be any of the basic types, pointers, slices or another map
-* slices of the above types and `interface{}`, to an arbitrary depth (i.e `[][][][]int64 etc. are supported)
+* slices of the above types and `interface{}`, to an arbitrary depth (i.e `[][][][]int64` etc. are supported)
 
 An error is returned if the type is not supported.
 
