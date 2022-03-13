@@ -14,3 +14,18 @@ Types supported:
 
 An error is returned if the type is not supported.
 
+### Proto
+
+The `Value` message uses `oneof`, ensuring that only a single value is included in each instance.
+
+`ValueList` provides an list of `Value`, of length zero of more.
+
+`ValueMap` provides a mapping `map<string, Value>`.
+
+`Value` can contain a `ValueList` or a `ValueMap`, allowing complex structures to be modelled (and hence serialised) within a single `Value`. 
+
+### Parsing slices
+
+When parsing a `ValueList`, the `ValueListType` enumeration stored within it allows the parser to attempt to return a strongly typed slice, but will default to `[]interface{}` if this is not possible.
+
+
