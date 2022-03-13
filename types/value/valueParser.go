@@ -1,10 +1,479 @@
 package value
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"time"
 )
+
+var errTypeMismatch = errors.New("unexpected type mismatch")
+
+// createListFromType returns a strongly typed slice, given the
+// parsed values and the specified type
+func createListFromType(t ValueListType, l []interface{}) (interface{}, error) {
+
+	switch t {
+	case ValueListType_Interface:
+		{
+			ll := make([]interface{}, len(l))
+			for i, v := range l {
+				ll[i] = v
+			}
+
+			return ll, nil
+		}
+	case ValueListType_Bool:
+		{
+			ll := make([]bool, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.(bool)
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_PtrBool:
+		{
+			ll := make([]*bool, len(l))
+			for i, v := range l {
+				if v != nil {
+					var ok bool
+					ll[i], ok = v.(*bool)
+					if !ok {
+						return nil, errTypeMismatch
+					}
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_Bytes:
+		{
+			ll := make([][]byte, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.([]byte)
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_Double:
+		{
+			ll := make([]float64, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.(float64)
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_PtrDouble:
+		{
+			ll := make([]*float64, len(l))
+			for i, v := range l {
+				if v != nil {
+					var ok bool
+					ll[i], ok = v.(*float64)
+					if !ok {
+						return nil, errTypeMismatch
+					}
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_Float:
+		{
+			ll := make([]float32, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.(float32)
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_PtrFloat:
+		{
+			ll := make([]*float32, len(l))
+			for i, v := range l {
+				if v != nil {
+					var ok bool
+					ll[i], ok = v.(*float32)
+					if !ok {
+						return nil, errTypeMismatch
+					}
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_Int32:
+		{
+			ll := make([]int32, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.(int32)
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_PtrInt32:
+		{
+			ll := make([]*int32, len(l))
+			for i, v := range l {
+				if v != nil {
+					var ok bool
+					ll[i], ok = v.(*int32)
+					if !ok {
+						return nil, errTypeMismatch
+					}
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_Int64:
+		{
+			ll := make([]int64, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.(int64)
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_PtrInt64:
+		{
+			ll := make([]*int64, len(l))
+			for i, v := range l {
+				if v != nil {
+					var ok bool
+					ll[i], ok = v.(*int64)
+					if !ok {
+						return nil, errTypeMismatch
+					}
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_UInt32:
+		{
+			ll := make([]uint32, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.(uint32)
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_PtrUInt32:
+		{
+			ll := make([]*uint32, len(l))
+			for i, v := range l {
+				if v != nil {
+					var ok bool
+					ll[i], ok = v.(*uint32)
+					if !ok {
+						return nil, errTypeMismatch
+					}
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_UInt64:
+		{
+			ll := make([]uint64, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.(uint64)
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_PtrUInt64:
+		{
+			ll := make([]*uint64, len(l))
+			for i, v := range l {
+				if v != nil {
+					var ok bool
+					ll[i], ok = v.(*uint64)
+					if !ok {
+						return nil, errTypeMismatch
+					}
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_SInt32:
+		{
+			ll := make([]int32, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.(int32)
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_PtrSInt32:
+		{
+			ll := make([]*int32, len(l))
+			for i, v := range l {
+				if v != nil {
+					var ok bool
+					ll[i], ok = v.(*int32)
+					if !ok {
+						return nil, errTypeMismatch
+					}
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_SInt64:
+		{
+			ll := make([]int64, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.(int64)
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_PtrSInt64:
+		{
+			ll := make([]*int64, len(l))
+			for i, v := range l {
+				if v != nil {
+					var ok bool
+					ll[i], ok = v.(*int64)
+					if !ok {
+						return nil, errTypeMismatch
+					}
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_Fixed32:
+		{
+			ll := make([]uint32, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.(uint32)
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_PtrFixed32:
+		{
+			ll := make([]*uint32, len(l))
+			for i, v := range l {
+				if v != nil {
+					var ok bool
+					ll[i], ok = v.(*uint32)
+					if !ok {
+						return nil, errTypeMismatch
+					}
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_Fixed64:
+		{
+			ll := make([]uint64, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.(uint64)
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_PtrFixed64:
+		{
+			ll := make([]*uint64, len(l))
+			for i, v := range l {
+				if v != nil {
+					var ok bool
+					ll[i], ok = v.(*uint64)
+					if !ok {
+						return nil, errTypeMismatch
+					}
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_String:
+		{
+			ll := make([]string, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.(string)
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_PtrString:
+		{
+			ll := make([]*string, len(l))
+			for i, v := range l {
+				if v != nil {
+					var ok bool
+					ll[i], ok = v.(*string)
+					if !ok {
+						return nil, errTypeMismatch
+					}
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_Time:
+		{
+			ll := make([]time.Time, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.(time.Time)
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_PtrTime:
+		{
+			ll := make([]*time.Time, len(l))
+			for i, v := range l {
+				if v != nil {
+					var ok bool
+					ll[i], ok = v.(*time.Time)
+					if !ok {
+						return nil, errTypeMismatch
+					}
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_Duration:
+		{
+			ll := make([]time.Duration, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.(time.Duration)
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_PtrDuration:
+		{
+			ll := make([]*time.Duration, len(l))
+			for i, v := range l {
+				if v != nil {
+					var ok bool
+					ll[i], ok = v.(*time.Duration)
+					if !ok {
+						return nil, errTypeMismatch
+					}
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_ValueList:
+		{
+			ll := make([][]interface{}, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.([]interface{})
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	case ValueListType_ValueMap:
+		{
+			ll := make([]map[string]interface{}, len(l))
+			for i, v := range l {
+				var ok bool
+				ll[i], ok = v.(map[string]interface{})
+				if !ok {
+					return nil, errTypeMismatch
+				}
+			}
+
+			return ll, nil
+		}
+	default:
+		return reflect.ValueOf(nil), fmt.Errorf("unsupported type in ValueList (%v)", t)
+	}
+}
+
+// listFromValueList creates a strongly typed list from a ValueList
+func listFromValueList(vl *Value_ValueList) (interface{}, error) {
+
+	l := make([]interface{}, len(vl.V))
+
+	for i := 0; i < len(vl.V); i++ {
+		ii, err := ParseValue(vl.V[i])
+		if err != nil {
+			return nil, err
+		}
+		l[i] = ii
+	}
+
+	return createListFromType(vl.T, l)
+}
 
 // ParseValue creates an instance of ValueParser that extracts go types
 func ParseValue(v *Value) (interface{}, error) {
@@ -162,17 +631,11 @@ func ParseValue(v *Value) (interface{}, error) {
 		}
 	case *Value_L:
 		{
-			l := make([]interface{}, 0, len(x.L.V))
-
-			for _, vv := range x.L.V {
-				ii, err := ParseValue(vv)
-				if err != nil {
-					return nil, err
-				}
-				l = append(l, ii)
+			var err error
+			i, err = listFromValueList(x.L)
+			if err != nil {
+				return nil, err
 			}
-
-			i = l
 		}
 	default:
 		return nil, fmt.Errorf("unsupported type: %v", reflect.TypeOf(x))

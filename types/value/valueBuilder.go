@@ -1,12 +1,100 @@
 package value
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"time"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
+
+var errNotSlice = errors.New("not a slice type")
+var errUnsupportedSliceType = errors.New("unsupported slice type")
+
+// getTypeOfSlice returns the type of the elements of the slice
+func getTypeOfSlice(i interface{}) (reflect.Type, error) {
+	v := reflect.ValueOf(i)
+	if v.Kind() != reflect.Slice {
+		return reflect.TypeOf(nil), errNotSlice
+	}
+	return v.Type().Elem(), nil
+}
+
+// sliceTypeToValueListTypeMap is the set of supported slice types
+var sliceTypeToValueListTypeMap map[reflect.Type]ValueListType = map[reflect.Type]ValueListType{
+	reflect.TypeOf([]interface{}{}).Elem():              ValueListType_Interface,
+	reflect.TypeOf([]bool{}).Elem():                     ValueListType_Bool,
+	reflect.TypeOf([]*bool{}).Elem():                    ValueListType_PtrBool,
+	reflect.TypeOf([][]byte{}).Elem():                   ValueListType_Bytes,
+	reflect.TypeOf([]float32{}).Elem():                  ValueListType_Float,
+	reflect.TypeOf([]*float32{}).Elem():                 ValueListType_PtrFloat,
+	reflect.TypeOf([]float64{}).Elem():                  ValueListType_Double,
+	reflect.TypeOf([]*float64{}).Elem():                 ValueListType_PtrDouble,
+	reflect.TypeOf([]int32{}).Elem():                    ValueListType_Int32,
+	reflect.TypeOf([]*int32{}).Elem():                   ValueListType_PtrInt32,
+	reflect.TypeOf([]int64{}).Elem():                    ValueListType_Int64,
+	reflect.TypeOf([]*int64{}).Elem():                   ValueListType_PtrInt64,
+	reflect.TypeOf([]uint32{}).Elem():                   ValueListType_UInt32,
+	reflect.TypeOf([]*uint32{}).Elem():                  ValueListType_PtrUInt32,
+	reflect.TypeOf([]uint64{}).Elem():                   ValueListType_UInt64,
+	reflect.TypeOf([]*uint64{}).Elem():                  ValueListType_PtrUInt64,
+	reflect.TypeOf([]string{}).Elem():                   ValueListType_String,
+	reflect.TypeOf([]*string{}).Elem():                  ValueListType_PtrString,
+	reflect.TypeOf([]time.Time{}).Elem():                ValueListType_Time,
+	reflect.TypeOf([]*time.Time{}).Elem():               ValueListType_PtrTime,
+	reflect.TypeOf([]time.Duration{}).Elem():            ValueListType_Duration,
+	reflect.TypeOf([]*time.Duration{}).Elem():           ValueListType_Duration,
+	reflect.TypeOf([][]interface{}{}).Elem():            ValueListType_ValueList,
+	reflect.TypeOf([]map[string][]interface{}{}).Elem(): ValueListType_ValueMap,
+}
+
+// fromSliceTypeToValueListType maps from the type of the elements
+// of the slice to the ValueListType enumeration value
+func fromSliceTypeToValueListType(i interface{}) (ValueListType, error) {
+
+	t, err := getTypeOfSlice(i)
+	if err != nil {
+		return ValueListType_Unknown, err
+	}
+
+	vlt, ok := sliceTypeToValueListTypeMap[t]
+	if !ok {
+		return ValueListType_Unknown, errUnsupportedSliceType
+	}
+
+	return vlt, nil
+}
+
+// listBuilder creates a Value containing a ValueList
+func listBuilder(i interface{}) (*Value, error) {
+
+	t, err := fromSliceTypeToValueListType(i)
+	if err != nil {
+		return nil, err
+	}
+
+	x := reflect.ValueOf(i)
+
+	l := make([]*Value, 0, x.Len())
+
+	for i := 0; i < x.Len(); i++ {
+		v, err := NewValue(x.Index(i).Interface())
+		if err != nil {
+			return nil, err
+		}
+		l = append(l, v)
+	}
+
+	return &Value{
+		V: &Value_L{
+			L: &Value_ValueList{
+				V: l,
+				T: t,
+			},
+		},
+	}, nil
+}
 
 // NewValue creates an instance of Value holding the specified value
 func NewValue(i interface{}) (*Value, error) {
@@ -24,7 +112,11 @@ func NewValue(i interface{}) (*Value, error) {
 		}
 	case *bool:
 		{
-			v = &Value{V: &Value_Pb{Pb: *x}}
+			if x == nil {
+				v = &Value{V: &Value_IsNull{IsNull: true}}
+			} else {
+				v = &Value{V: &Value_Pb{Pb: *x}}
+			}
 		}
 	case []byte:
 		{
@@ -36,7 +128,11 @@ func NewValue(i interface{}) (*Value, error) {
 		}
 	case *int32:
 		{
-			v = &Value{V: &Value_Pi32{Pi32: *x}}
+			if x == nil {
+				v = &Value{V: &Value_IsNull{IsNull: true}}
+			} else {
+				v = &Value{V: &Value_Pi32{Pi32: *x}}
+			}
 		}
 	case int64:
 		{
@@ -44,7 +140,11 @@ func NewValue(i interface{}) (*Value, error) {
 		}
 	case *int64:
 		{
-			v = &Value{V: &Value_Pi64{Pi64: *x}}
+			if x == nil {
+				v = &Value{V: &Value_IsNull{IsNull: true}}
+			} else {
+				v = &Value{V: &Value_Pi64{Pi64: *x}}
+			}
 		}
 	case uint32:
 		{
@@ -52,7 +152,11 @@ func NewValue(i interface{}) (*Value, error) {
 		}
 	case *uint32:
 		{
-			v = &Value{V: &Value_Pu32{Pu32: *x}}
+			if x == nil {
+				v = &Value{V: &Value_IsNull{IsNull: true}}
+			} else {
+				v = &Value{V: &Value_Pu32{Pu32: *x}}
+			}
 		}
 	case uint64:
 		{
@@ -60,7 +164,11 @@ func NewValue(i interface{}) (*Value, error) {
 		}
 	case *uint64:
 		{
-			v = &Value{V: &Value_Pu64{Pu64: *x}}
+			if x == nil {
+				v = &Value{V: &Value_IsNull{IsNull: true}}
+			} else {
+				v = &Value{V: &Value_Pu64{Pu64: *x}}
+			}
 		}
 	case float32:
 		{
@@ -68,7 +176,11 @@ func NewValue(i interface{}) (*Value, error) {
 		}
 	case *float32:
 		{
-			v = &Value{V: &Value_Pf{Pf: *x}}
+			if x == nil {
+				v = &Value{V: &Value_IsNull{IsNull: true}}
+			} else {
+				v = &Value{V: &Value_Pf{Pf: *x}}
+			}
 		}
 	case float64:
 		{
@@ -76,7 +188,11 @@ func NewValue(i interface{}) (*Value, error) {
 		}
 	case *float64:
 		{
-			v = &Value{V: &Value_Pd{Pd: *x}}
+			if x == nil {
+				v = &Value{V: &Value_IsNull{IsNull: true}}
+			} else {
+				v = &Value{V: &Value_Pd{Pd: *x}}
+			}
 		}
 	case string:
 		{
@@ -84,7 +200,11 @@ func NewValue(i interface{}) (*Value, error) {
 		}
 	case *string:
 		{
-			v = &Value{V: &Value_Ps{Ps: *x}}
+			if x == nil {
+				v = &Value{V: &Value_IsNull{IsNull: true}}
+			} else {
+				v = &Value{V: &Value_Ps{Ps: *x}}
+			}
 		}
 	case time.Time:
 		{
@@ -97,11 +217,15 @@ func NewValue(i interface{}) (*Value, error) {
 		}
 	case *time.Time:
 		{
-			v = &Value{V: &Value_Pt{
-				Pt: &timestamppb.Timestamp{
-					Seconds: x.Unix(),
-					Nanos:   int32(x.Nanosecond()),
-				}},
+			if x == nil {
+				v = &Value{V: &Value_IsNull{IsNull: true}}
+			} else {
+				v = &Value{V: &Value_Pt{
+					Pt: &timestamppb.Timestamp{
+						Seconds: x.Unix(),
+						Nanos:   int32(x.Nanosecond()),
+					}},
+				}
 			}
 		}
 	case time.Duration:
@@ -110,7 +234,11 @@ func NewValue(i interface{}) (*Value, error) {
 		}
 	case *time.Duration:
 		{
-			v = &Value{V: &Value_Pdur{Pdur: int64(*x)}}
+			if x == nil {
+				v = &Value{V: &Value_IsNull{IsNull: true}}
+			} else {
+				v = &Value{V: &Value_Pdur{Pdur: int64(*x)}}
+			}
 		}
 	case map[string]interface{}:
 		{
@@ -129,22 +257,23 @@ func NewValue(i interface{}) (*Value, error) {
 				},
 			}
 		}
-	case []interface{}:
+	case []interface{},
+		[]bool, []*bool, [][]byte,
+		[]int64, []*int64,
+		[]uint64, []*uint64,
+		[]float64, []*float64,
+		[]int32, []*int32,
+		[]uint32, []*uint32,
+		[]float32, []*float32,
+		[]string, []*string,
+		[]time.Time, []*time.Time,
+		[]time.Duration, []*time.Duration,
+		[][]interface{}, []map[string]interface{}:
 		{
-			l := make([]*Value, 0, len(x))
-
-			for _, v := range x {
-				newV, err := NewValue(v)
-				if err != nil {
-					return nil, err
-				}
-				l = append(l, newV)
-			}
-
-			v = &Value{
-				V: &Value_L{
-					L: &Value_ValueList{V: l},
-				},
+			var err error
+			v, err = listBuilder(x)
+			if err != nil {
+				return nil, err
 			}
 		}
 	default:

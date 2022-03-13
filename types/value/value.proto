@@ -4,12 +4,49 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/gford1000-go/protobuf/types/value";
 
+enum ValueListType {
+  Unknown = 0;
+  Interface = 999;
+  Bool = 1;
+  Bytes = 2;
+  Double = 3;
+  Float = 4;
+  Int32 = 5;
+  Int64 = 6;
+  UInt32 = 7;
+  UInt64 = 8;
+  SInt32 = 9;
+  SInt64 = 10;
+  Fixed32 = 11;
+  Fixed64 = 12;
+  Time = 13;
+  Duration = 14;
+  ValueMap = 15;
+  ValueList = 16;
+  PtrBool = 17;
+  PtrDouble = 18;
+  PtrFloat = 19;
+  PtrInt32 = 20;
+  PtrInt64 = 21;
+  PtrUInt32 = 22;
+  PtrUInt64 = 23;
+  PtrSInt32 = 24;
+  PtrSInt64 = 25;
+  PtrFixed32 = 26;
+  PtrFixed64 = 27;
+  PtrTime = 28;
+  PtrDuration = 29;
+  String = 30;
+  PtrString = 31;
+}
+
 message Value {
   message ValueMap {
     map<string, Value> m = 1;
   }
   message ValueList {
     repeated Value v = 1;
+    ValueListType t = 2;
   }
 
   oneof v {
