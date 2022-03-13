@@ -23,30 +23,30 @@ func getTypeOfSlice(i interface{}) (reflect.Type, error) {
 
 // sliceTypeToValueListTypeMap is the set of supported slice types
 var sliceTypeToValueListTypeMap map[reflect.Type]ValueListType = map[reflect.Type]ValueListType{
-	reflect.TypeOf([]interface{}{}).Elem():              ValueListType_Interface,
-	reflect.TypeOf([]bool{}).Elem():                     ValueListType_Bool,
-	reflect.TypeOf([]*bool{}).Elem():                    ValueListType_PtrBool,
-	reflect.TypeOf([][]byte{}).Elem():                   ValueListType_Bytes,
-	reflect.TypeOf([]float32{}).Elem():                  ValueListType_Float,
-	reflect.TypeOf([]*float32{}).Elem():                 ValueListType_PtrFloat,
-	reflect.TypeOf([]float64{}).Elem():                  ValueListType_Double,
-	reflect.TypeOf([]*float64{}).Elem():                 ValueListType_PtrDouble,
-	reflect.TypeOf([]int32{}).Elem():                    ValueListType_Int32,
-	reflect.TypeOf([]*int32{}).Elem():                   ValueListType_PtrInt32,
-	reflect.TypeOf([]int64{}).Elem():                    ValueListType_Int64,
-	reflect.TypeOf([]*int64{}).Elem():                   ValueListType_PtrInt64,
-	reflect.TypeOf([]uint32{}).Elem():                   ValueListType_UInt32,
-	reflect.TypeOf([]*uint32{}).Elem():                  ValueListType_PtrUInt32,
-	reflect.TypeOf([]uint64{}).Elem():                   ValueListType_UInt64,
-	reflect.TypeOf([]*uint64{}).Elem():                  ValueListType_PtrUInt64,
-	reflect.TypeOf([]string{}).Elem():                   ValueListType_String,
-	reflect.TypeOf([]*string{}).Elem():                  ValueListType_PtrString,
-	reflect.TypeOf([]time.Time{}).Elem():                ValueListType_Time,
-	reflect.TypeOf([]*time.Time{}).Elem():               ValueListType_PtrTime,
-	reflect.TypeOf([]time.Duration{}).Elem():            ValueListType_Duration,
-	reflect.TypeOf([]*time.Duration{}).Elem():           ValueListType_Duration,
-	reflect.TypeOf([][]interface{}{}).Elem():            ValueListType_ValueList,
-	reflect.TypeOf([]map[string][]interface{}{}).Elem(): ValueListType_ValueMap,
+	reflect.TypeOf([]interface{}{}).Elem():            ValueListType_Interface,
+	reflect.TypeOf([]bool{}).Elem():                   ValueListType_Bool,
+	reflect.TypeOf([]*bool{}).Elem():                  ValueListType_PtrBool,
+	reflect.TypeOf([][]byte{}).Elem():                 ValueListType_Bytes,
+	reflect.TypeOf([]float32{}).Elem():                ValueListType_Float,
+	reflect.TypeOf([]*float32{}).Elem():               ValueListType_PtrFloat,
+	reflect.TypeOf([]float64{}).Elem():                ValueListType_Double,
+	reflect.TypeOf([]*float64{}).Elem():               ValueListType_PtrDouble,
+	reflect.TypeOf([]int32{}).Elem():                  ValueListType_Int32,
+	reflect.TypeOf([]*int32{}).Elem():                 ValueListType_PtrInt32,
+	reflect.TypeOf([]int64{}).Elem():                  ValueListType_Int64,
+	reflect.TypeOf([]*int64{}).Elem():                 ValueListType_PtrInt64,
+	reflect.TypeOf([]uint32{}).Elem():                 ValueListType_UInt32,
+	reflect.TypeOf([]*uint32{}).Elem():                ValueListType_PtrUInt32,
+	reflect.TypeOf([]uint64{}).Elem():                 ValueListType_UInt64,
+	reflect.TypeOf([]*uint64{}).Elem():                ValueListType_PtrUInt64,
+	reflect.TypeOf([]string{}).Elem():                 ValueListType_String,
+	reflect.TypeOf([]*string{}).Elem():                ValueListType_PtrString,
+	reflect.TypeOf([]time.Time{}).Elem():              ValueListType_Time,
+	reflect.TypeOf([]*time.Time{}).Elem():             ValueListType_PtrTime,
+	reflect.TypeOf([]time.Duration{}).Elem():          ValueListType_Duration,
+	reflect.TypeOf([]*time.Duration{}).Elem():         ValueListType_Duration,
+	reflect.TypeOf([][]interface{}{}).Elem():          ValueListType_ValueList,
+	reflect.TypeOf([]map[string]interface{}{}).Elem(): ValueListType_ValueMap,
 }
 
 // fromSliceTypeToValueListType maps from the type of the elements
@@ -268,7 +268,7 @@ func NewValue(i interface{}) (*Value, error) {
 		[]string, []*string,
 		[]time.Time, []*time.Time,
 		[]time.Duration, []*time.Duration,
-		[][]interface{}, []map[string]interface{}:
+		[]map[string]interface{}:
 		{
 			var err error
 			v, err = listBuilder(x)
@@ -277,7 +277,33 @@ func NewValue(i interface{}) (*Value, error) {
 			}
 		}
 	default:
-		return nil, fmt.Errorf("unsupported type: %v", reflect.TypeOf(x))
+		{
+			vv := reflect.ValueOf(i)
+			if vv.Type().Kind() != reflect.Slice {
+				return nil, fmt.Errorf("unsupported type: %v", reflect.TypeOf(x))
+			}
+
+			l := make([]*Value, vv.Len())
+			var err error
+			for i := 0; i < vv.Len(); i++ {
+				if !vv.Index(i).IsValid() {
+					continue
+				}
+				l[i], err = NewValue(vv.Index(i).Interface())
+				if err != nil {
+					return nil, err
+				}
+			}
+
+			v = &Value{
+				V: &Value_L{
+					L: &Value_ValueList{
+						V: l,
+						T: ValueListType_Interface,
+					},
+				},
+			}
+		}
 	}
 
 	return v, nil

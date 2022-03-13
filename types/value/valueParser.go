@@ -16,8 +16,16 @@ func createListFromType(t ValueListType, l []interface{}) (interface{}, error) {
 	switch t {
 	case ValueListType_Interface:
 		{
+			var err error
+			var vv *Value
 			ll := make([]interface{}, len(l))
 			for i, v := range l {
+				if reflect.TypeOf(v) == reflect.TypeOf(vv) {
+					v, err = ParseValue(v.(*Value))
+					if err != nil {
+						return nil, err
+					}
+				}
 				ll[i] = v
 			}
 

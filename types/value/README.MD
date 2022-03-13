@@ -9,8 +9,8 @@ Types supported:
 * Basic types: bool, int32/64, uint32/64, float32/64, string
 * `time.Time` and `time.Duration`
 * Pointers of the basic types and the time types
-* `map[string]interface{}`, where 
-* slices of the above types and `interface{}`
+* `map[string]interface{}`, where `interface{}` can be any of the basic types, pointers, slices or another map
+* slices of the above types and `interface{}`, to an arbitrary depth (i.e `[][][][]int64 etc. are supported)
 
 An error is returned if the type is not supported.
 
