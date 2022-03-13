@@ -16,7 +16,7 @@ func ExampleNewValue() {
 
 	data := []interface{}{
 		"Ultimate Question of Life, the Universe, and Everything",
-		uint64(42),
+		int64(42),
 		float64(1e80),
 		map[string]interface{}{
 			"q": "Ultimate Question of Life, the Universe, and Everything",
@@ -33,5 +33,5 @@ func ExampleNewValue() {
 	}
 
 	fmt.Println(lengths)
-	// Output: [57 3 9 92 17 18]
+	// Output: [57 2 9 92 17 18]
 }
