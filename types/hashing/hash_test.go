@@ -90,6 +90,93 @@ func TestSlicesEqual(t *testing.T) {
 	}
 }
 
+func TestSlicesEqualAtDepth(t *testing.T) {
+
+	h, err := DefaultFactory.GetHasherWithSalt(SHA256, []byte("12345"))
+	if err != nil {
+		t.Fatal("Unable to retrieve SHA256 Hasher")
+	}
+
+	h1 := h.Hash([][][]int64{{}, {{1, 2, 3}, {4}}}).H
+	h2 := h.Hash([][][]int64{{}, {{2, 1, 3}, {4}}}).H
+	h3 := h.Hash([][][]int64{{{1, 2, 3}, {4}}, {}}).H
+
+	if !bytes.Equal(h1, h2) || !bytes.Equal(h1, h3) {
+		t.Fatal("Slice equivalence error when nested")
+	}
+}
+
+func TestSlicesNotEqualAtDepth(t *testing.T) {
+
+	h, err := DefaultFactory.GetHasherWithSalt(SHA256, []byte("12345"))
+	if err != nil {
+		t.Fatal("Unable to retrieve SHA256 Hasher")
+	}
+
+	h1 := h.Hash([][][]int64{{}, {{1, 2, 3}, {4}}}).H
+	h2 := h.Hash([][][]int64{{{1, 2, 3}, {4}}, {}, {{1}}}).H
+
+	if bytes.Equal(h1, h2) {
+		t.Fatal("Slice equivalence when different")
+	}
+}
+
+func TestInterfaceSlicesAndMapsNotEqualAtDepth(t *testing.T) {
+
+	h, err := DefaultFactory.GetHasherWithSalt(SHA256, []byte("12345"))
+	if err != nil {
+		t.Fatal("Unable to retrieve SHA256 Hasher")
+	}
+
+	type testData struct {
+		a interface{}
+		b interface{}
+	}
+
+	data := []testData{
+		{},
+		{
+			a: []interface{}{
+				int64(1), "Hello", [][]int64{{1, 2, 3}, {}},
+			},
+			b: []interface{}{
+				int64(1), "Hello", [][]int64{{}, {2, 1, 3}},
+			},
+		},
+		{
+			a: []interface{}{
+				int64(1), "Hello", map[string]interface{}{
+					"x": []interface{}{[][]int64{{}, {2, 1, 3}}, "World"},
+					"y": "Hi",
+					"z": map[string]interface{}{
+						"m": []int64{1, 2, 8},
+						"n": []int64{-1, 12, 19},
+					},
+				},
+			},
+			b: []interface{}{
+				int64(1), "Hello", map[string]interface{}{
+					"y": "Hi",
+					"x": []interface{}{"World", [][]int64{{}, {1, 2, 3}}},
+					"z": map[string]interface{}{
+						"n": []int64{19, 12, -1},
+						"m": []int64{1, 8, 2},
+					},
+				},
+			},
+		},
+	}
+
+	for _, d := range data {
+		h1 := h.Hash(d.a).H
+		h2 := h.Hash(d.b).H
+
+		if !bytes.Equal(h1, h2) {
+			t.Fatal("Slice equivalence when different")
+		}
+	}
+}
+
 func TestSlicesDifferent(t *testing.T) {
 
 	h, err := DefaultFactory.GetHasherWithSalt(SHA256, []byte("12345"))
