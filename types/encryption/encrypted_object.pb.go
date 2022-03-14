@@ -73,7 +73,7 @@ func (x *EncryptedObject) GetA() Algo {
 	if x != nil {
 		return x.A
 	}
-	return Algo_Unknown
+	return Algo_UnknownAlgo
 }
 
 func (x *EncryptedObject) GetV() []byte {

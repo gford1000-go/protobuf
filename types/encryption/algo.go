@@ -21,7 +21,7 @@ func NewAlgo(a Algorithm) (Algo, error) {
 			return Algo_GCM, nil
 		}
 	}
-	return Algo_Unknown, errUnknownAlgorithmUsed
+	return Algo_UnknownAlgo, errUnknownAlgorithmUsed
 }
 
 // ParseAlgo returns the corresponding Algorithm to the Algo,
