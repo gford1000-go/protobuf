@@ -5,7 +5,7 @@ import "google/protobuf/timestamp.proto";
 option go_package = "github.com/gford1000-go/protobuf/types/value";
 
 enum ValueListType {
-  Unknown = 0;
+  UnknownValueListType = 0;
   Interface = 999;
   Bool = 1;
   Bytes = 2;
