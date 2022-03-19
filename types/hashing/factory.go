@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"io"
+	"sync"
 )
 
 var errInvalidHasherCreator = errors.New("HasherCreator must not be nil")
@@ -41,6 +42,7 @@ func NewFactory(cs []HasherCreator) (*Factory, error) {
 // HasherCreator for the required HashType
 type Factory struct {
 	m map[HashType]HasherCreator
+	l sync.Mutex
 }
 
 // AddHasherCreator inserts the specified HasherCreator
@@ -49,6 +51,9 @@ type Factory struct {
 // will be set to this HasherCreator, overwriting the prior
 // HasherCreator if that existed.
 func (f *Factory) AddHasherCreator(c HasherCreator) error {
+	f.l.Lock()
+	defer f.l.Unlock()
+
 	if c == nil {
 		return errInvalidHasherCreator
 	}
@@ -77,6 +82,9 @@ func (f *Factory) GetHasher(t HashType) (Hasher, error) {
 // GetHasherWithSalt returns an instance of a Hasher of the specified
 // HashType, initialised with the specified salt
 func (f *Factory) GetHasherWithSalt(t HashType, salt []byte) (Hasher, error) {
+	f.l.Lock()
+	defer f.l.Unlock()
+
 	c, ok := f.m[t]
 	if !ok {
 		return nil, errUnknownHashType
