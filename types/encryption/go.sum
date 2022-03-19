@@ -1,5 +1,5 @@
-github.com/gford1000-go/protobuf/types/value v0.0.0-20220314063249-5ad305922b47 h1:5KKUBf13AtK4UnQ92T9AmrDD/Tnt0lHwPIFI2b3qHJc=
-github.com/gford1000-go/protobuf/types/value v0.0.0-20220314063249-5ad305922b47/go.mod h1:p5I2h6+zLsJH+RuhiU5I3K5pt/Oy9/raecsWAW6dyQE=
+github.com/gford1000-go/protobuf/types/value v0.0.0-20220314064412-d8df7f7de839 h1:SczDRBwbPJdP0DJJfFQUpSDNY+8Pb70RpkY7xV+1k54=
+github.com/gford1000-go/protobuf/types/value v0.0.0-20220314064412-d8df7f7de839/go.mod h1:p5I2h6+zLsJH+RuhiU5I3K5pt/Oy9/raecsWAW6dyQE=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=

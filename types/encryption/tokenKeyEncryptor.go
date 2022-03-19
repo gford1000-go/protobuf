@@ -6,6 +6,6 @@ package encryption
 // The GetKeys function uses the provided key to encrypt the map
 // of tokens->keys inside an EncryptedObject, for secure distribution
 type TokenKeyEncryptor interface {
-	EncryptFromToken(token []byte, plaintext []byte) ([]byte, Algorithm, error)
+	EncryptFromToken(token []byte, plaintext []byte) ([]byte, AlgoType, error)
 	GetKeys(key []byte) (*EncryptedObject, error)
 }

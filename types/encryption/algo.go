@@ -2,19 +2,11 @@ package encryption
 
 import "errors"
 
-// Algorithm represents available encryption algorithms
-type Algorithm uint
-
-const (
-	Unknown Algorithm = iota
-	GCM
-)
-
 var errUnknownAlgorithmUsed = errors.New("unsupported algorithm used for encryption")
 
-// NewAlgo returns the corresponding Algo to the Algorithm,
+// NewAlgo returns the corresponding Algo to the AlgoType,
 // or returns Algo_Unknown and an error if not matched
-func NewAlgo(a Algorithm) (Algo, error) {
+func NewAlgo(a AlgoType) (Algo, error) {
 	switch a {
 	case GCM:
 		{
@@ -24,9 +16,9 @@ func NewAlgo(a Algorithm) (Algo, error) {
 	return Algo_UnknownAlgo, errUnknownAlgorithmUsed
 }
 
-// ParseAlgo returns the corresponding Algorithm to the Algo,
+// ParseAlgo returns the corresponding AlgoType to the Algo,
 // or returns Unknown and an error if not matched
-func ParseAlgo(a Algo) (Algorithm, error) {
+func ParseAlgo(a Algo) (AlgoType, error) {
 	switch a {
 	case Algo_GCM:
 		{

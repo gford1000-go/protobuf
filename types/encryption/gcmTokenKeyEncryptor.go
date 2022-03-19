@@ -29,7 +29,7 @@ func (g *GCMTokenKeyEncryptor) GetKeys(key []byte) (*EncryptedObject, error) {
 }
 
 // EncryptFromToken attempts to encrypt using the key associated with the token.
-func (g *GCMTokenKeyEncryptor) EncryptFromToken(keyToken []byte, plaintext []byte) ([]byte, Algorithm, error) {
+func (g *GCMTokenKeyEncryptor) EncryptFromToken(keyToken []byte, plaintext []byte) ([]byte, AlgoType, error) {
 	if len(keyToken) == 0 {
 		return nil, Unknown, errInvalidKeyToken
 	}
@@ -48,7 +48,7 @@ func (g *GCMTokenKeyEncryptor) EncryptFromToken(keyToken []byte, plaintext []byt
 }
 
 // Encrypt attempts to encrypt using the specified key
-func (g *GCMTokenKeyEncryptor) Encrypt(key []byte, plaintext []byte) ([]byte, Algorithm, error) {
+func (g *GCMTokenKeyEncryptor) Encrypt(key []byte, plaintext []byte) ([]byte, AlgoType, error) {
 	gcm, err := NewGCMEncryptor(key)
 	if err != nil {
 		return nil, Unknown, errEncryptionError
