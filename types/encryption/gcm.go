@@ -8,8 +8,8 @@ import (
 	"io"
 )
 
-// NewAESKey returns a new key for AES encryption
-func NewAESKey() ([]byte, error) {
+// newAESKey returns a new key for AES encryption
+func newAESKey() ([]byte, error) {
 	k := make([]byte, aes.BlockSize)
 	if _, err := io.ReadFull(rand.Reader, k); err != nil {
 		return nil, fmt.Errorf("error creating key - %v", err)
@@ -17,8 +17,8 @@ func NewAESKey() ([]byte, error) {
 	return k, nil
 }
 
-// NewGCMEncryptor creates a new instance, initialised with the key
-func NewGCMEncryptor(key []byte) (*GCMEncryptor, error) {
+// newGCMEncryptor creates a new instance, initialised with the key
+func newGCMEncryptor(key []byte) (*gcmEncryptor, error) {
 
 	if len(key) != aes.BlockSize {
 		return nil, fmt.Errorf("key is wrong size - should be %v bytes", aes.BlockSize)
@@ -29,18 +29,18 @@ func NewGCMEncryptor(key []byte) (*GCMEncryptor, error) {
 		return nil, err
 	}
 
-	return &GCMEncryptor{
+	return &gcmEncryptor{
 		c: c,
 	}, nil
 }
 
-// GCMEncryptor provides GCM encryption and decryption
-type GCMEncryptor struct {
+// gcmEncryptor provides GCM encryption and decryption
+type gcmEncryptor struct {
 	c cipher.Block
 }
 
 // Encrypt returns the ciphertext for the plaintext
-func (g *GCMEncryptor) Encrypt(plaintext []byte) ([]byte, error) {
+func (g *gcmEncryptor) Encrypt(plaintext []byte) ([]byte, error) {
 
 	gcm, err := cipher.NewGCM(g.c)
 	if err != nil {
@@ -58,7 +58,7 @@ func (g *GCMEncryptor) Encrypt(plaintext []byte) ([]byte, error) {
 }
 
 // Decrypt returns the plaintext for the ciphertext
-func (g *GCMEncryptor) Decrypt(ciphertext []byte) ([]byte, error) {
+func (g *gcmEncryptor) Decrypt(ciphertext []byte) ([]byte, error) {
 
 	gcm, err := cipher.NewGCM(g.c)
 	if err != nil {

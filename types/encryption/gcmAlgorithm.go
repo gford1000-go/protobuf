@@ -4,12 +4,13 @@ import "errors"
 
 var errDecryptionError = errors.New("error during decryption")
 
+// gcmAlgo implements Encryptor and Decryptor interfaces
 type gcmAlgo struct {
 }
 
 // Decrypt attempts to decrypt using the key.
 func (g *gcmAlgo) Decrypt(key []byte, ciphertext []byte) ([]byte, error) {
-	gcm, err := NewGCMEncryptor(key)
+	gcm, err := newGCMEncryptor(key)
 	if err != nil {
 		return nil, errDecryptionError
 	}
@@ -24,7 +25,7 @@ func (g *gcmAlgo) Decrypt(key []byte, ciphertext []byte) ([]byte, error) {
 
 // Encrypt attempts to encrypt using the specified key
 func (g *gcmAlgo) Encrypt(key []byte, plaintext []byte) ([]byte, AlgoType, error) {
-	gcm, err := NewGCMEncryptor(key)
+	gcm, err := newGCMEncryptor(key)
 	if err != nil {
 		return nil, Unknown, errEncryptionError
 	}
@@ -47,7 +48,7 @@ func (g *gcmAlgorithm) GetType() AlgoType {
 }
 
 func (g *gcmAlgorithm) CreateKey() ([]byte, error) {
-	return NewAESKey()
+	return newAESKey()
 }
 
 func (g *gcmAlgorithm) GetEncryptor() Encryptor {

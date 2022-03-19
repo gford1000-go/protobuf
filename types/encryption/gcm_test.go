@@ -13,10 +13,10 @@ func TestEncryption(t *testing.T) {
 		{00, 11, 22, 33},
 	}
 
-	k, _ := NewAESKey()
+	k, _ := newAESKey()
 
-	gcmE, _ := NewGCMEncryptor(k)
-	gcmD, _ := NewGCMEncryptor(k)
+	gcmE, _ := newGCMEncryptor(k)
+	gcmD, _ := newGCMEncryptor(k)
 
 	for _, d := range data {
 
@@ -43,9 +43,9 @@ func TestNonEqualEncryption(t *testing.T) {
 		[]byte("Hello World"),
 	}
 
-	k, _ := NewAESKey()
+	k, _ := newAESKey()
 
-	gcmE, _ := NewGCMEncryptor(k)
+	gcmE, _ := newGCMEncryptor(k)
 
 	for _, data := range testData {
 
@@ -69,9 +69,9 @@ func TestNonEqualPlaintext(t *testing.T) {
 		[]byte("Hello World"),
 	}
 
-	k, _ := NewAESKey()
+	k, _ := newAESKey()
 
-	gcmE, _ := NewGCMEncryptor(k)
+	gcmE, _ := newGCMEncryptor(k)
 
 	for _, p := range testData {
 
