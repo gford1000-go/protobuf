@@ -2,6 +2,7 @@ package encryption
 
 import (
 	"errors"
+	"sync"
 )
 
 var errInvalidAlgoCreator = errors.New("AlgorihmCreator must not be nil")
@@ -38,11 +39,15 @@ func NewAlgorithmFactory(as []AlgorithmCreator) (*AlgoFactory, error) {
 // AlgorithmCreator for the required AlgoType
 type AlgoFactory struct {
 	m map[AlgoType]AlgorithmCreator
+	l sync.Mutex
 }
 
 // AddAlgorithmCreator inserts the specified AlgorithmCreator
 // into the AlgoFactory
 func (f *AlgoFactory) AddAlgorithmCreator(c AlgorithmCreator) error {
+	f.l.Lock()
+	defer f.l.Unlock()
+
 	if c == nil {
 		return errInvalidAlgoCreator
 	}
@@ -65,6 +70,9 @@ func (f *AlgoFactory) AddAlgorithmCreator(c AlgorithmCreator) error {
 // GetAlgorithm returns an instance of a Algorithm of the
 // specified AlgoType
 func (f *AlgoFactory) GetAlgorithm(t AlgoType) (Algorithm, error) {
+	f.l.Lock()
+	defer f.l.Unlock()
+
 	c, ok := f.m[t]
 	if !ok {
 		return nil, errUnknownAlgoType
