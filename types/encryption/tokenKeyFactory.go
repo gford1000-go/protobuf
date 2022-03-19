@@ -67,16 +67,19 @@ var errInvalidTokenKeyEncryptionCreator = errors.New("TokenKeyEncryptionCreator 
 var errInvalidTokenKeyEncryptionID = errors.New("TokenKeyEncryptionCreator must have a valid ID")
 var errInvalidCreatorNoEncryptor = errors.New("TokenKeyEncryptionCreator must provide a non-nil Encryptor")
 var errUnknownTokenKeyEncryptionID = errors.New("unknown TokenKeyEncryptionCreatorID")
-var errAlgoTypeMismatch = errors.New("TokenKeyEncryptionCreator algo type is mismatched to the EncryptedObject algo type")
 
 func init() {
+	c, err := newDefaultGCMCreator()
+	if err != nil {
+		panic(err)
+	}
 	DefaultTokenKeyEncryptionFactory, _ = NewTokenKeyEncryptionFactory([]TokenKeyEncryptionCreator{
-		&defaultGCMTokenKeyEncryption{},
+		c,
 	})
 }
 
 // DefaultTokenKeyEncryptionFactory is a TokenKeyEncryptionFactory pre-filled with
-// with default TokenKeyEncryptionCreators
+// with default TokenKeyEncryptionCreators (currently only DefaultGCM)
 var DefaultTokenKeyEncryptionFactory TokenKeyEncryptionFactory
 
 // NewTokenKeyEncryptionFactory returns an instance of TokenKeyEncryptionFactory,
@@ -139,7 +142,7 @@ func (f *tkeFactory) GetTokenKeyEncryptionCreatorIDs() TokenKeyEncryptionCreator
 	defer f.l.Unlock()
 
 	ids := make(TokenKeyEncryptionCreatorIDList, 0, len(f.m))
-	for k, _ := range f.m {
+	for k := range f.m {
 		ids = append(ids, k)
 	}
 
