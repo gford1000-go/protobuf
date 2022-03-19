@@ -29,8 +29,10 @@ func TestObject(t *testing.T) {
 
 	for _, i := range testData {
 
+		id := TokenKeyEncryptionCreatorID("DefaultGCM")
+
 		// Encrypts by key token
-		e, _ := NewTokenKeyEncryptor(GCM)
+		e, _ := DefaultTokenKeyEncryptionFactory.GetTokenKeyEncryptor(id)
 
 		// Dummy value to be serialised
 		v, _ := value.NewValue(i)
@@ -50,7 +52,7 @@ func TestObject(t *testing.T) {
 
 		// Populate using the encrypted keys from the extractor, using
 		// the Default AlgorithmFactory to provide the decryption algo
-		d, err := NewTokenKeyDecryptor(masterKey, encryptedKeys, DefaultAlgoFactory)
+		d, err := DefaultTokenKeyEncryptionFactory.GetTokenKeyDecryptor(id, masterKey, encryptedKeys, DefaultAlgoFactory)
 		if err != nil {
 			t.Errorf("failed to decrypt keys: %v", err)
 		}
