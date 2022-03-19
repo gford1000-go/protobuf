@@ -28,10 +28,10 @@ type AlgorithmFactory interface {
 	GetAlgorithm(t AlgoType) (Algorithm, error)
 }
 
-// Decryptor will attempt to decrypt the ciphertext using the
-// specified key applied the specified AlgoType
+// Decryptor will attempt to decrypt the ciphertext
+// using the specified key
 type Decryptor interface {
-	Decrypt(key []byte, a AlgoType, ciphertext []byte) ([]byte, error)
+	Decrypt(key []byte, ciphertext []byte) ([]byte, error)
 }
 
 // Encryptor will attempt to use the key to encrypt the plaintext,

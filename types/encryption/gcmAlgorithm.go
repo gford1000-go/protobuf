@@ -1,14 +1,14 @@
 package encryption
 
+import "errors"
+
+var errDecryptionError = errors.New("error during decryption")
+
 type gcmAlgo struct {
 }
 
 // Decrypt attempts to decrypt using the key.
-func (g *gcmAlgo) Decrypt(key []byte, algo AlgoType, ciphertext []byte) ([]byte, error) {
-	if algo != GCM {
-		return nil, errDecryptionError
-	}
-
+func (g *gcmAlgo) Decrypt(key []byte, ciphertext []byte) ([]byte, error) {
 	gcm, err := NewGCMEncryptor(key)
 	if err != nil {
 		return nil, errDecryptionError

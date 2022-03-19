@@ -37,7 +37,7 @@ func TestObject(t *testing.T) {
 		}
 
 		// Populate using the encrypted keys from the extractor
-		d, err := NewGCMTokenKeyDecryptor(masterKey, encryptedKeys)
+		d, err := NewTokenKeyDecryptor(masterKey, encryptedKeys)
 		if err != nil {
 			t.Errorf("failed to decrypt keys: %v", err)
 		}
