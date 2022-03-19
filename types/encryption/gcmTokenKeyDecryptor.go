@@ -6,20 +6,30 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+var errObjectIsNil = errors.New("EncryptedObject must not be nil")
+var errFactoryIsNil = errors.New("AlgorithmFactory must not be nil")
 var errAlgoMismatch = errors.New("AlgoType mismatch")
 var errMissingKeyToken = errors.New("keyToken not found")
 
 // NewTokenKeyDecryptor returns a new instance of TokenKeyDecryptor,
 // prefilled with the specified set of key tokens and associated keys that
 // have been retrieved from the encrypted object using the specified key
-func NewTokenKeyDecryptor(key []byte, keys *EncryptedObject) (TokenKeyDecryptor, error) {
+func NewTokenKeyDecryptor(key []byte, keys *EncryptedObject, factory AlgorithmFactory) (TokenKeyDecryptor, error) {
+
+	if keys == nil {
+		return nil, errObjectIsNil
+	}
+
+	if factory == nil {
+		return nil, errFactoryIsNil
+	}
 
 	a, err := ParseAlgo(keys.A)
 	if err != nil {
 		return nil, err
 	}
 
-	algo, err := DefaultAlgoFactory.GetAlgorithm(a)
+	algo, err := factory.GetAlgorithm(a)
 	if err != nil {
 		return nil, err
 	}

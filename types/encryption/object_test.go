@@ -36,8 +36,9 @@ func TestObject(t *testing.T) {
 			t.Errorf("failed to get encrypted keys: %v", err)
 		}
 
-		// Populate using the encrypted keys from the extractor
-		d, err := NewTokenKeyDecryptor(masterKey, encryptedKeys)
+		// Populate using the encrypted keys from the extractor, using
+		// the Default AlgorithmFactory to provide the decryption algo
+		d, err := NewTokenKeyDecryptor(masterKey, encryptedKeys, DefaultAlgoFactory)
 		if err != nil {
 			t.Errorf("failed to decrypt keys: %v", err)
 		}
