@@ -46,6 +46,10 @@ func (g *gcmAlgorithm) GetType() AlgoType {
 	return GCM
 }
 
+func (g *gcmAlgorithm) CreateKey() ([]byte, error) {
+	return NewAESKey()
+}
+
 func (g *gcmAlgorithm) GetEncryptor() Encryptor {
 	return g.a
 }

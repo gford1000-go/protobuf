@@ -11,6 +11,7 @@ const (
 // Algorithm provides an Encryptor and Decryptor interface,
 // that implement the specified AlgoType
 type Algorithm interface {
+	CreateKey() ([]byte, error)
 	GetType() AlgoType
 	GetEncryptor() Encryptor
 	GetDecryptor() Decryptor

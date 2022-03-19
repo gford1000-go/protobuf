@@ -7,5 +7,5 @@ package encryption
 // of tokens->keys inside an EncryptedObject, for secure distribution
 type TokenKeyEncryptor interface {
 	EncryptFromToken(token []byte, plaintext []byte) ([]byte, AlgoType, error)
-	GetKeys(key []byte) (*EncryptedObject, error)
+	GetKeys(key []byte, a Algorithm) (*EncryptedObject, error)
 }

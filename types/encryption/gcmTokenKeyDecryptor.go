@@ -10,6 +10,7 @@ var errObjectIsNil = errors.New("EncryptedObject must not be nil")
 var errFactoryIsNil = errors.New("AlgorithmFactory must not be nil")
 var errAlgoMismatch = errors.New("AlgoType mismatch")
 var errMissingKeyToken = errors.New("keyToken not found")
+var errNoDecryptor = errors.New("Algorithm returns nil Decryptor")
 
 // NewTokenKeyDecryptor returns a new instance of TokenKeyDecryptor,
 // prefilled with the specified set of key tokens and associated keys that
@@ -34,6 +35,10 @@ func NewTokenKeyDecryptor(key []byte, keys *EncryptedObject, factory AlgorithmFa
 		return nil, err
 	}
 
+	if algo.GetDecryptor() == nil {
+		return nil, errNoDecryptor
+	}
+
 	b, err := algo.GetDecryptor().Decrypt(key, keys.V)
 	if err != nil {
 		return nil, err
@@ -45,20 +50,20 @@ func NewTokenKeyDecryptor(key []byte, keys *EncryptedObject, factory AlgorithmFa
 		return nil, err
 	}
 
-	return &gcmTokenKeyDecryptor{
+	return &defaultTokenKeyDecryptor{
 		a:    algo,
 		keys: k.GetKeys(),
 	}, nil
 }
 
-// gcmTokenKeyDecryptor implements TokenKeyDecryptor for GCM symmetric encryption
-type gcmTokenKeyDecryptor struct {
+// defaultTokenKeyDecryptor implements TokenKeyDecryptor for decryption
+type defaultTokenKeyDecryptor struct {
 	keys map[string][]byte
 	a    Algorithm
 }
 
 // DecryptFromToken attempts to decrypt using the key associated with the token.
-func (g *gcmTokenKeyDecryptor) DecryptFromToken(keyToken []byte, algo AlgoType, ciphertext []byte) ([]byte, error) {
+func (g *defaultTokenKeyDecryptor) DecryptFromToken(keyToken []byte, algo AlgoType, ciphertext []byte) ([]byte, error) {
 	if algo != g.a.GetType() {
 		return nil, errAlgoMismatch
 	}
