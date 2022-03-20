@@ -1,8 +1,8 @@
-github.com/gford1000-go/protobuf/types/encryption v0.0.0-20220311184423-32b6fd6de6c3 h1:7CSxFDofALQBDih5PZDLdHZhHVW0eldnrhppxNt1Tgg=
-github.com/gford1000-go/protobuf/types/encryption v0.0.0-20220311184423-32b6fd6de6c3/go.mod h1:v9UP1fWnihtRrIsE1IbteyqkzKZWGj8QQd19atMDQF8=
-github.com/gford1000-go/protobuf/types/value v0.0.0-20220310071951-94ce62209d95/go.mod h1:NPcQm7G0DPUvGaUNgLGHIqBo7Y9Huokf9AAg+x+HegA=
-github.com/gford1000-go/protobuf/types/value v0.0.0-20220311184423-32b6fd6de6c3 h1:Dds++lNDS1vklR+u2bXzeDzbj3n/0Ah0GPU4bJT3gMo=
-github.com/gford1000-go/protobuf/types/value v0.0.0-20220311184423-32b6fd6de6c3/go.mod h1:NPcQm7G0DPUvGaUNgLGHIqBo7Y9Huokf9AAg+x+HegA=
+github.com/gford1000-go/protobuf/types/encryption v0.0.0-20220319190440-cc600b096735 h1:KUS2M45JqD6dN5XOoELySqDfByBJRZnWpXpZo7NIOYA=
+github.com/gford1000-go/protobuf/types/encryption v0.0.0-20220319190440-cc600b096735/go.mod h1:7jxM3dt7SJCOaAIOz6SkCGyt3Wl1x/vx2ETHAZ3CLqk=
+github.com/gford1000-go/protobuf/types/value v0.0.0-20220319134934-bd524269ef4c/go.mod h1:p5I2h6+zLsJH+RuhiU5I3K5pt/Oy9/raecsWAW6dyQE=
+github.com/gford1000-go/protobuf/types/value v0.0.0-20220319190440-cc600b096735 h1:b0jGJYOs3y5jwUCAcvsfMUDrnYum/Tx8ifyq7fxGn58=
+github.com/gford1000-go/protobuf/types/value v0.0.0-20220319190440-cc600b096735/go.mod h1:p5I2h6+zLsJH+RuhiU5I3K5pt/Oy9/raecsWAW6dyQE=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
 github.com/google/go-cmp v0.5.5 h1:Khx7svrCpmxxtHBq5j2mp/xVjsi8hQMfNLvJFAlrGgU=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
