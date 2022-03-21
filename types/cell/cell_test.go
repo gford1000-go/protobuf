@@ -89,7 +89,9 @@ func ExampleCellBuilder() {
 	// Create the Hasher that returns the hash of the cell's value
 	h, _ := hashing.DefaultFactory.GetHasher(hashing.SHA256)
 
-	e := encryption.NewGCMTokenKeyEncryptor()
+	// Retrieve the TokenKeyEncryptor for the specified ID
+	id := encryption.TokenKeyEncryptionCreatorID("DefaultGCM")
+	e, _ := encryption.DefaultTokenKeyEncryptionFactory.GetTokenKeyEncryptor(id)
 
 	cb, _ := NewCellBuilder(e, h)
 
@@ -102,14 +104,16 @@ func ExampleCellBuilder() {
 	// use the dummyKeyManager to assign randomly
 	data, _, _ := cb.Marshal(i, km, km)
 
+	// Envelope key and algorithm, for keys transfer
+	gcm, _ := encryption.DefaultAlgoFactory.GetAlgorithm(encryption.GCM)
+	masterKey, _ := gcm.CreateKey()
+
 	// Get the keys used to encrypt the cell
 	// need to supply a master key with which they are secured
-	masterKey := []byte("0123456789abcdef") // Should be random
-	k, _ := e.GetKeys(masterKey)
+	k, _ := e.GetKeys(masterKey, gcm)
 
-	// The decryptor is initialised by providing the secured keys
-	// and the masterKey
-	d, _ := encryption.NewGCMTokenKeyDecryptor(masterKey, k)
+	// Retrieve the TokenKeyDecryptor for the specified ID
+	d, _ := encryption.DefaultTokenKeyEncryptionFactory.GetTokenKeyDecryptor(id, masterKey, k, encryption.DefaultAlgoFactory)
 
 	// Create a cell parser, supplying the decryptor
 	cp, _ := NewCellParser(d)
