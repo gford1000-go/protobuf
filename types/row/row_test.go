@@ -7,6 +7,7 @@ import (
 
 	"github.com/gford1000-go/protobuf/types/cell"
 	"github.com/gford1000-go/protobuf/types/encryption"
+	"github.com/gford1000-go/protobuf/types/hashing"
 )
 
 func createRows() []Row {
@@ -53,7 +54,12 @@ type keyToken struct {
 
 // controller implements all interfaces needed to marshal and parse a row
 type controller struct {
+	af        encryption.AlgorithmFactory
 	d         encryption.TokenKeyDecryptor
+	dtkf      encryption.TokenKeyEncryptionFactory
+	envAlgo   encryption.AlgoType
+	h         hashing.Hasher
+	i         encryption.TokenKeyEncryptionCreatorID
 	nToi      map[AttributeName]AttributeIdentifier
 	iTon      map[AttributeIdentifier]AttributeName
 	rowTokens [][]byte
@@ -64,19 +70,32 @@ type controller struct {
 func (e *controller) init(nRows int, attributeNames []AttributeName) {
 	rand.Seed(99) // Used to consistently randomise whether a cell should be encrypted
 
+	// Details for envelope encryption of the token->key map
+	e.af = encryption.DefaultAlgoFactory
+	e.envAlgo = encryption.GCM
+
+	// Details for key token encryption and decryption
+	e.dtkf = encryption.DefaultTokenKeyEncryptionFactory
+	e.i = encryption.TokenKeyEncryptionCreatorID("DefaultGCM")
+
+	// Attribute lookup map
 	e.nToi = make(map[AttributeName]AttributeIdentifier)
 	e.iTon = make(map[AttributeIdentifier]AttributeName)
 
+	// The set of attributes in each row
 	for i, n := range attributeNames {
 		e.nToi[n] = AttributeIdentifier(i)
 		e.iTon[AttributeIdentifier(i)] = n
 	}
 
+	// Row tokens - normally these would differentiate between
+	// different access to the rows, here just have unique values
 	e.rowTokens = make([][]byte, 0, nRows)
 	for i := 0; i < nRows; i++ {
 		e.rowTokens = append(e.rowTokens, []byte(fmt.Sprintf("%v", i)))
 	}
 
+	// Generate some psuedo random data in the rows
 	e.keyTokens = make([]*keyToken, 0, nRows*len(attributeNames))
 	for i := 0; i < nRows*len(attributeNames); i++ {
 		kt := &keyToken{
@@ -85,10 +104,35 @@ func (e *controller) init(nRows int, attributeNames []AttributeName) {
 		}
 		e.keyTokens = append(e.keyTokens, kt)
 	}
+
+	// Could have different hashing for each attribute but here
+	// will just use the same hasher for all attributes
+	e.h, _ = hashing.DefaultFactory.GetHasher(hashing.SHA256)
+}
+
+func (e *controller) getEnvelopeAlgorithm() (encryption.Algorithm, error) {
+	return e.af.GetAlgorithm(encryption.GCM)
+}
+
+func (e *controller) createEnvelopeMasterKey() []byte {
+	// Use the initialised algo and factory to generate
+	// a new master key
+	enve, _ := e.getEnvelopeAlgorithm()
+	masterKey, _ := enve.CreateKey()
+	return masterKey
+}
+
+func (e *controller) createEncryptor() (encryption.TokenKeyEncryptor, error) {
+	// Use the initialised factory and algo to
+	// create an encryptor
+	return e.dtkf.GetTokenKeyEncryptor(e.i)
 }
 
 func (e *controller) createDecryptor(keys []byte, eo *encryption.EncryptedObject) {
-	d, _ := encryption.NewGCMTokenKeyDecryptor(keys, eo)
+	// Use the initialised factory and algo, the
+	// encrypted token->key map, and the envelope master key,
+	// to initialise an instance of the correct decryptor
+	d, _ := e.dtkf.GetTokenKeyDecryptor(e.i, keys, eo, e.af)
 	e.d = d
 }
 
@@ -137,7 +181,15 @@ func (e *controller) GetRowTokenKeyDecryptor() encryption.TokenKeyDecryptor {
 	return e.d
 }
 func (e *controller) GetCellsTokenKeyDecryptor(rowID RowID) encryption.TokenKeyDecryptor {
+	// Use the same decryptor for both attributes and rows.
+	// Not recommended for production use
 	return e.d
+}
+
+func (e *controller) GetHasher(name AttributeName) (hashing.Hasher, error) {
+	// Single hasher used for all attributes.
+	// Not recommended for production use
+	return e.h, nil
 }
 
 func ExampleRowBuilder() {
@@ -152,23 +204,26 @@ func ExampleRowBuilder() {
 	c := &controller{}
 	c.init(len(rows), rows[0].GetAttributeNames())
 
-	// For this example, ensure encryptors and decryptors observe
-	// the same map of token->key, so that decryption is successful.
-	// In normal use, the data requestor will only have a subset of
-	// the full map, which controls their access to data.
-	e := encryption.NewGCMTokenKeyEncryptor()
+	// Create the encryptor to be used on each cell
+	e, _ := c.createEncryptor()
 
-	cb, _ := NewRowBuilder(e, c)
+	// RowBuilder performs the marshaling
+	rb, _ := NewRowBuilder(c, e, c)
 
 	// Marshal the contents of the Row.
 	// The row is serialised and encrypted, as well as
 	// potentially encrypting specific cell values
-	data, _ := cb.Marshal(rows[0].GetID(), rows[0].GetAll(), c)
+	data, _, _ := rb.Marshal(rows[0].GetID(), rows[0].GetAll(), c)
 
-	// Transfer the encryption keys to the controller object
-	masterKey := []byte("0123456789abcdef") // Should be random
-	keys, _ := e.GetKeys(masterKey)
-	c.createDecryptor(masterKey, keys)
+	// Secure retrieval of token->key map
+	envelopeMasterKey := c.createEnvelopeMasterKey()
+	envelopeAlgo, _ := c.getEnvelopeAlgorithm()
+	keys, _ := e.GetKeys(envelopeMasterKey, envelopeAlgo)
+
+	// Transfer of token->key map to a decryptor.
+	// Access control is normally applied at this point, which
+	// limits the visibility of data to the decryptor
+	c.createDecryptor(envelopeMasterKey, keys)
 
 	cp, _ := NewRowParser(c, c)
 
