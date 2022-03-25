@@ -93,7 +93,7 @@ func ExampleCellBuilder() {
 	id := encryption.TokenKeyEncryptionCreatorID("DefaultGCM")
 	e, _ := encryption.DefaultTokenKeyEncryptionFactory.GetTokenKeyEncryptor(id)
 
-	cb, _ := NewCellBuilder(e, h)
+	cb, _ := NewCellBuilder(e)
 
 	// This is the cell's value
 	i := createValue()
@@ -102,7 +102,7 @@ func ExampleCellBuilder() {
 	// correct keyToken and apply encryption as required - this
 	// would typically need awareness of other data but here we
 	// use the dummyKeyManager to assign randomly
-	data, _, _ := cb.Marshal(i, km, km)
+	data, _, _ := cb.Marshal(i, h, km, km)
 
 	// Envelope key and algorithm, for keys transfer
 	gcm, _ := encryption.DefaultAlgoFactory.GetAlgorithm(encryption.GCM)
