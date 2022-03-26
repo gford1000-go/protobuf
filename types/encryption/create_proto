@@ -1,9 +1,7 @@
 #!/bin/sh
 
-GOPATH=/users/gford1000/Go
+protoc --go_out=$GOPATH/src --proto_path=. algo.proto
 
-protoc -I=/usr/local/include --go_out=$GOPATH/src --proto_path=. algo.proto
+protoc --go_out=$GOPATH/src --proto_path=. encrypted_object.proto
 
-protoc -I=/usr/local/include --go_out=$GOPATH/src --proto_path=. encrypted_object.proto
-
-protoc -I=/usr/local/include --go_out=$GOPATH/src --proto_path=. keys.proto
+protoc --go_out=$GOPATH/src --proto_path=. keys.proto

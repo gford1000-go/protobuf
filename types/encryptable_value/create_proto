@@ -1,6 +1,3 @@
 #!/bin/sh
 
-GOPATH=/users/gford1000/Go
-TYPES=$GOPATH/src/github.com/gford1000-go/protobuf/types
-
-protoc -I=/usr/local/include -I=$TYPES/value -I=$TYPES/encryption --go_out=$GOPATH/src --proto_path=. encryptable_value.proto
+protoc -I=../value -I=../encryption --go_out=$GOPATH/src --proto_path=. encryptable_value.proto

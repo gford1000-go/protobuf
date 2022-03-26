@@ -1,9 +1,9 @@
 module github.com/gford1000-go/protobuf/types/encryptable_value
 
-go 1.17
+go 1.18
 
 require (
-	github.com/gford1000-go/protobuf/types/encryption v0.0.0-20220319190440-cc600b096735
-	github.com/gford1000-go/protobuf/types/value v0.0.0-20220319190440-cc600b096735
-	google.golang.org/protobuf v1.27.1
+	github.com/gford1000-go/protobuf/types/encryption v0.0.0-20220325093607-2e80c0a6c7d5
+	github.com/gford1000-go/protobuf/types/value v0.0.0-20220325093607-2e80c0a6c7d5
+	google.golang.org/protobuf v1.28.0
 )

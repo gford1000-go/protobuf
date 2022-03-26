@@ -1,12 +1,12 @@
 module github.com/gford1000-go/protobuf/types/row
 
-go 1.17
+go 1.18
 
 require (
-	github.com/gford1000-go/protobuf/types/cell v0.0.0-20220325082119-47bb50865a09
-	github.com/gford1000-go/protobuf/types/encryption v0.0.0-20220325082119-47bb50865a09
-	github.com/gford1000-go/protobuf/types/hashing v0.0.0-20220325082119-47bb50865a09
-	github.com/gford1000-go/protobuf/types/value v0.0.0-20220325082119-47bb50865a09
+	github.com/gford1000-go/protobuf/types/cell v0.0.0-20220325093607-2e80c0a6c7d5
+	github.com/gford1000-go/protobuf/types/encryption v0.0.0-20220325093607-2e80c0a6c7d5
+	github.com/gford1000-go/protobuf/types/hashing v0.0.0-20220325093607-2e80c0a6c7d5
+	github.com/gford1000-go/protobuf/types/value v0.0.0-20220325093607-2e80c0a6c7d5
 	google.golang.org/protobuf v1.28.0
 )
 
