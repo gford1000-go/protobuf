@@ -47,31 +47,36 @@ type keyToken struct {
 	encrypt bool
 }
 
-// dummyKeyManager holds the tokens used in the processing
-type dummyKeyManager struct {
+// packer holds the tokens used in the processing
+type packer struct {
 	keyTokens []*keyToken
 }
 
 // init creates the specified set of tokens
-func (d *dummyKeyManager) init(n int) {
-	d.keyTokens = make([]*keyToken, 0, n)
+func (p *packer) init(n int) {
+	p.keyTokens = make([]*keyToken, 0, n)
 	for i := 0; i < n; i++ {
 		kt := &keyToken{
 			token:   []byte(fmt.Sprintf("%v", rand.Intn(n*1000))),
 			encrypt: rand.Intn(2) == 1,
 		}
-		d.keyTokens = append(d.keyTokens, kt)
+		p.keyTokens = append(p.keyTokens, kt)
 	}
 }
 
-func (d *dummyKeyManager) GetToken() []byte {
-	// Would do something clever here
-	// for now, return random selection
-	return d.keyTokens[rand.Intn(len(d.keyTokens))].token
+func (p *packer) GetSalt() []byte {
+	// Provide a random salt for production use
+	return []byte("xyz")
 }
 
-func (d *dummyKeyManager) Encrypt(keyToken []byte) bool {
-	for _, k := range d.keyTokens {
+func (p *packer) GetToken() []byte {
+	// Would do something clever here
+	// for now, return random selection
+	return p.keyTokens[rand.Intn(len(p.keyTokens))].token
+}
+
+func (p *packer) Encrypt(keyToken []byte) bool {
+	for _, k := range p.keyTokens {
 		if bytes.Equal(k.token, keyToken) {
 			return k.encrypt
 		}
@@ -83,17 +88,15 @@ func ExampleCellBuilder() {
 	rand.Seed(time.Now().Unix())
 
 	// This emulates logic that has assigned keyTokens to the contents of each Cell
-	km := &dummyKeyManager{}
-	km.init(100)
-
-	// Create the Hasher that returns the hash of the cell's value
-	h, _ := hashing.DefaultFactory.GetHasher(hashing.SHA256)
+	p := &packer{}
+	p.init(100)
 
 	// Retrieve the TokenKeyEncryptor for the specified ID
 	id := encryption.TokenKeyEncryptionCreatorID("DefaultGCM")
 	e, _ := encryption.DefaultTokenKeyEncryptionFactory.GetTokenKeyEncryptor(id)
 
-	cb, _ := NewCellBuilder(e)
+	// Create a CellBuilder which will use SHA256 from the default factory to create hashes
+	cb, _ := NewCellBuilder(e, hashing.DefaultFactory, hashing.SHA256)
 
 	// This is the cell's value
 	i := createValue()
@@ -102,7 +105,7 @@ func ExampleCellBuilder() {
 	// correct keyToken and apply encryption as required - this
 	// would typically need awareness of other data but here we
 	// use the dummyKeyManager to assign randomly
-	data, _, _ := cb.Marshal(i, h, km, km)
+	data, _, _ := cb.Marshal(i, p, nil, p, p)
 
 	// Envelope key and algorithm, for keys transfer
 	gcm, _ := encryption.DefaultAlgoFactory.GetAlgorithm(encryption.GCM)
@@ -116,7 +119,7 @@ func ExampleCellBuilder() {
 	d, _ := encryption.DefaultTokenKeyEncryptionFactory.GetTokenKeyDecryptor(id, masterKey, k, encryption.DefaultAlgoFactory)
 
 	// Create a cell parser, supplying the decryptor
-	cp, _ := NewCellParser(d)
+	cp, _ := NewCellParser(d, nil)
 
 	// Parse a Cell back to its constituent Value(s).  For now the
 	// Cell only supports scalar entries (i.e. only one Value, which

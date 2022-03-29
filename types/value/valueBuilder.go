@@ -55,12 +55,12 @@ func fromSliceTypeToValueListType(i interface{}) (ValueListType, error) {
 
 	t, err := getTypeOfSlice(i)
 	if err != nil {
-		return ValueListType_Unknown, err
+		return ValueListType_UnknownValueListType, err
 	}
 
 	vlt, ok := sliceTypeToValueListTypeMap[t]
 	if !ok {
-		return ValueListType_Unknown, errUnsupportedSliceType
+		return ValueListType_UnknownValueListType, errUnsupportedSliceType
 	}
 
 	return vlt, nil

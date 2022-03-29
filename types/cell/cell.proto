@@ -5,6 +5,17 @@ option go_package = "github.com/gford1000-go/protobuf/types/cell";
 
 message Cell {
     oneof c {
+        uint64 token = 1;
         EncryptableValue scalar = 2;
     }
 }
+
+message CollectedCells {
+    map<uint64, Cell> tokenToCellMap = 1;
+}
+
+message TokenMap {
+    map<string, uint64> hashToTokenMap = 1;
+}
+
+
